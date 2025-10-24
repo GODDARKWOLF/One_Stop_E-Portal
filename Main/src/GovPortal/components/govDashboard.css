@@ -1,0 +1,473 @@
+/* GovPortal Dashboard styles - extending the design system */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+:root {
+    --primary: #1E2A5E;
+    --secondary: #25346C;
+    --accent: #F5F7FA;
+    --text: #1C1C1C;
+    --text-light: #FFFFFF;
+    --danger: #FF4444;
+    --success: #28C76F;
+    --warning: #FFA500;
+    --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+}
+
+/* Inherit common styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html,
+#root {
+    height: 100%;
+}
+
+.gov-dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--accent);
+}
+
+/* Sidebar */
+.gov-sidebar {
+    width: 250px;
+    background: var(--secondary);
+    padding: 24px;
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.gov-sidebar.collapsed {
+    width: 80px;
+}
+
+.gov-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.gov-logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.gov-logo h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Navigation */
+.gov-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gov-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.gov-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
+}
+
+.gov-nav-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-light);
+}
+
+.gov-nav-item i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Main Content */
+.gov-main {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+/* Top Navigation */
+.gov-top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: var(--primary);
+    color: var(--text-light);
+    margin-bottom: 24px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+}
+
+.gov-search {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 24px;
+}
+
+.gov-search input {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+}
+
+.gov-search input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.gov-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gov-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stats Cards */
+.gov-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.gov-stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.gov-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.gov-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--primary);
+}
+
+.gov-stat-label {
+    color: var(--text);
+    font-size: 14px;
+}
+
+/* Animations */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-count {
+    animation: countUp 0.6s ease-out forwards;
+}
+
+.gov-stat-value.danger {
+    color: var(--danger);
+}
+
+.gov-stat-value.success {
+    color: var(--success);
+}
+
+.gov-stat-value.warning {
+    color: var(--warning);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .gov-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .gov-sidebar {
+        position: fixed;
+        left: -250px;
+        height: 100vh;
+        z-index: 1000;
+    }
+
+    .gov-sidebar.show {
+        left: 0;
+    }
+
+    .gov-top-nav {
+        flex-wrap: wrap;
+    }
+
+    .gov-search {
+        order: 3;
+        max-width: 100%;
+        margin: 16px 0 0;
+    }
+
+    .gov-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Shared card and utility styles to match Citizen Dashboard */
+.card,
+.gov-panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.card h3,
+.gov-panel h2 {
+    margin: 0 0 8px 0;
+}
+
+.gov-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.gov-panel-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.gov-action-btn,
+.gov-export-btn,
+.gov-page-btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(34, 34, 34, 0.06);
+    background: transparent;
+    cursor: pointer;
+}
+
+.gov-action-btn:hover,
+.gov-export-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.gov-reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.gov-report-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.gov-report-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.gov-report-content h3 {
+    margin: 0 0 6px 0;
+    font-size: 16px
+}
+
+.gov-report-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: #666
+}
+
+.gov-report-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px
+}
+
+.gov-table-container {
+    background: transparent;
+}
+
+.gov-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.gov-table th,
+.gov-table td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    color: var(--text);
+}
+
+.gov-table th {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.6px
+}
+
+.gov-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px
+}
+
+.gov-status-badge {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #fff
+}
+
+.gov-status-badge.success {
+    background: var(--success)
+}
+
+.gov-status-badge.warning {
+    background: var(--warning);
+    color: #000
+}
+
+.gov-status-badge.danger {
+    background: var(--danger)
+}
+
+.gov-compliance-bar {
+    position: relative;
+    background: #f1f5f9;
+    border-radius: 8px;
+    height: 10px;
+    width: 120px
+}
+
+.gov-compliance-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, var(--primary), #5b7be6);
+    border-radius: 8px
+}
+
+.pill {
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background: rgba(30, 42, 94, 0.06);
+    font-weight: 600;
+    font-size: 12px
+}
+
+.small {
+    font-size: 12px
+}
+
+.muted {
+    color: #6b7280
+}
+
+/* animations (reused) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(18px);
+        opacity: 0
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1
+    }
+}
+
+.fadeIn {
+    animation: fadeIn 0.45s ease both
+}
+
+.slideUp {
+    animation: slideUp 0.45s ease both
+}
+
+/* subtle adjustments to match Citizen dashboard spacing */
+.gov-main {
+    padding: 20px
+}
+
+.gov-sidebar {
+    padding: 20px;
+    border-radius: 0 12px 12px 0
+}
+
+.gov-logo h1 {
+    font-size: 18px
+}
+
+.gov-panel {
+    padding: 18px
+}

@@ -1,0 +1,216 @@
+/* Tax Records Page Styles */
+.tax-records-container {
+    padding: var(--spacing-6);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header Styles */
+.tax-records-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-8);
+}
+
+.tax-records-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+}
+
+/* Charts Grid */
+.tax-overview-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-6);
+}
+
+/* Chart Cards */
+.tax-chart-card,
+.tax-distribution-card {
+    height: 400px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.card-header h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.card-header h3 svg {
+    color: var(--primary);
+}
+
+.year-select {
+    width: 120px;
+}
+
+.chart-container {
+    height: calc(100% - 60px);
+    position: relative;
+}
+
+/* Table Styles */
+.tax-records-content {
+    overflow: hidden;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.table-title h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.table-actions {
+    display: flex;
+    gap: var(--spacing-4);
+}
+
+.date-filter,
+.type-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.table-actions select {
+    width: 150px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.tax-records-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tax-records-table th {
+    background: var(--bg-secondary);
+    padding: var(--spacing-3) var(--spacing-4);
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.tax-records-table td {
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+
+.tax-records-table tbody tr {
+    transition: var(--transition-base);
+}
+
+.tax-records-table tbody tr:hover {
+    background: var(--bg-secondary);
+}
+
+/* Amount Column */
+.amount {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.trend-icon {
+    font-size: 0.875rem;
+}
+
+.trend-icon.up {
+    color: var(--success);
+}
+
+.trend-icon.down {
+    color: var(--danger);
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-full);
+    font-size: 0.813rem;
+    font-weight: 500;
+}
+
+.status-badge.paid {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.status-badge.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.status-badge.overdue {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .tax-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tax-chart-card,
+    .tax-distribution-card {
+        height: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tax-records-container {
+        padding: var(--spacing-4);
+    }
+
+    .tax-records-header {
+        flex-direction: column;
+        gap: var(--spacing-4);
+    }
+
+    .table-header {
+        flex-direction: column;
+        gap: var(--spacing-4);
+    }
+
+    .table-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .date-filter,
+    .type-filter {
+        width: 100%;
+    }
+
+    .table-actions select {
+        width: 100%;
+    }
+}

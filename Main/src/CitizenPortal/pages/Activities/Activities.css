@@ -1,0 +1,258 @@
+/* Activities Timeline Styles */
+.activities-container {
+    padding: var(--spacing-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header Styles */
+.activities-header {
+    margin-bottom: var(--spacing-8);
+}
+
+.activities-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+}
+
+/* Content Layout */
+.activities-content {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--spacing-6);
+}
+
+/* Filter Card */
+.timeline-filters {
+    height: fit-content;
+}
+
+.timeline-filters h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    cursor: pointer;
+}
+
+.filter-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border-medium);
+    cursor: pointer;
+}
+
+.filter-group span {
+    color: var(--text-secondary);
+}
+
+/* Timeline Styles */
+.timeline-wrapper {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+}
+
+.timeline {
+    position: relative;
+    padding: var(--spacing-6);
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 35px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--bg-tertiary);
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 70px;
+    padding-bottom: var(--spacing-6);
+    animation: slideIn 0.5s ease-out both;
+    animation-delay: var(--delay);
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    z-index: 1;
+}
+
+.timeline-item.completed .timeline-icon {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.timeline-item.error .timeline-icon {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.timeline-item.pending .timeline-icon {
+    border-color: var(--warning);
+    color: var(--warning);
+}
+
+.timeline-content {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-4);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.timeline-header h3 {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.status-icon {
+    font-size: 1.25rem;
+}
+
+.status-icon.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.timeline-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-3);
+}
+
+.timeline-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.timeline-category {
+    background: var(--bg-tertiary);
+    color: var(--primary);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-full);
+    font-size: 0.813rem;
+}
+
+.timeline-date {
+    color: var(--text-muted);
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status Colors */
+.timeline-item.completed .status-icon {
+    color: var(--success);
+}
+
+.timeline-item.pending .status-icon {
+    color: var(--warning);
+}
+
+.timeline-item.error .status-icon {
+    color: var(--danger);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .activities-content {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline-filters {
+        margin-bottom: var(--spacing-4);
+    }
+
+    .filter-options {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--spacing-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .activities-container {
+        padding: var(--spacing-4);
+    }
+
+    .timeline {
+        padding: var(--spacing-4);
+    }
+
+    .timeline-item {
+        padding-left: 50px;
+    }
+
+    .timeline::before {
+        left: 25px;
+    }
+
+    .timeline-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.875rem;
+    }
+
+    .timeline-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-2);
+    }
+}

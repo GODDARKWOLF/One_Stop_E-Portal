@@ -1,0 +1,241 @@
+/* Dashboard Styles */
+.dashboard-container {
+    padding: var(--spacing-6);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    margin-bottom: var(--spacing-8);
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-2);
+}
+
+.dashboard-header p {
+    color: var(--text-secondary);
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    grid-template-areas:
+        "profile stats"
+        "profile activities";
+    gap: var(--spacing-6);
+}
+
+.profile-section {
+    grid-area: profile;
+}
+
+.stats-section {
+    grid-area: stats;
+}
+
+.activities-section {
+    grid-area: activities;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    color: var(--text-primary);
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-4);
+}
+
+.stat-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    animation-delay: var(--delay);
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    padding: var(--spacing-3);
+    border-radius: var(--radius-lg);
+    background: var(--bg-tertiary);
+}
+
+.stat-icon.success {
+    color: var(--success);
+}
+
+.stat-icon.warning {
+    color: var(--warning);
+}
+
+.stat-icon.danger {
+    color: var(--danger);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.stat-header h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stat-status {
+    font-size: 0.813rem;
+    font-weight: 500;
+}
+
+.stat-status.success {
+    color: var(--success);
+}
+
+.stat-status.warning {
+    color: var(--warning);
+}
+
+.stat-status.danger {
+    color: var(--danger);
+}
+
+/* Activities List */
+.activities-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--border-light);
+    animation-delay: calc(var(--index) * 0.1s);
+}
+
+.activity-item:last-of-type {
+    border-bottom: none;
+}
+
+.status-icon {
+    font-size: 1.25rem;
+    margin-top: var(--spacing-1);
+}
+
+.status-icon.success {
+    color: var(--success);
+}
+
+.status-icon.warning {
+    color: var(--warning);
+}
+
+.status-icon.danger {
+    color: var(--danger);
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-1);
+}
+
+.activity-header h4 {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.activity-time {
+    font-size: 0.813rem;
+    color: var(--text-secondary);
+}
+
+.activity-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-1);
+}
+
+.activity-date {
+    font-size: 0.813rem;
+    color: var(--text-muted);
+}
+
+.view-all-btn {
+    margin-top: var(--spacing-2);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "profile"
+            "stats"
+            "activities";
+    }
+
+    .profile-section {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: var(--spacing-4);
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Animation Delays */
+.slide-in-up,
+.slide-in-left {
+    animation-fill-mode: both;
+}
+
+.stat-card {
+    animation-fill-mode: both;
+    animation-delay: var(--delay);
+}

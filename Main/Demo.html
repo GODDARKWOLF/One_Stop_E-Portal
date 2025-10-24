@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ZRA Admin Dashboard (Vanilla)</title>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --bg: #0f1724;
+            /* deep navy */
+            --card: #111827;
+            --muted: #94a3b8;
+            --accent: #1e90ff;
+            --accent-2: #2dd4bf;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-2: rgba(255, 255, 255, 0.02);
+            --radius: 12px;
+            --gap: 14px;
+            --maxwidth: 1200px;
+            --transition: 200ms cubic-bezier(.2, .9, .2, 1);
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg, #071226 0%, #081827 60%);
+            color: #e6eef8;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* container */
+        .app {
+            max-width: var(--maxwidth);
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: var(--gap);
+            padding: 16px;
+        }
+
+        /* sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--card), #0b1220 120%);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6);
+            min-height: 70vh;
+            position: relative;
+            transition: all var(--transition);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.12);
+        }
+
+        .brand h1 {
+            font-size: 16px;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+
+        .brand p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .nav {
+            margin-top: 6px;
+        }
+
+        .nav a {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            color: #cfe7ff;
+            font-size: 14px;
+            margin-bottom: 6px;
+            transition: background var(--transition), transform var(--transition);
+        }
+
+        .nav a:hover {
+            background: var(--glass);
+            transform: translateX(4px);
+        }
+
+        .nav .section-title {
+            color: var(--muted);
+            font-size: 12px;
+            margin: 12px 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* main area */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+        }
+
+        /* topbar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hamburger {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass);
+            cursor: pointer;
+        }
+
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: var(--glass-2);
+            min-width: 220px;
+        }
+
+        .search input {
+            background: transparent;
+            border: 0;
+            outline: none;
+            color: inherit;
+            font-size: 14px;
+            width: 180px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            color: inherit;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #7dd3fc, #60a5fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #022;
+        }
+
+        /* grid content */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 14px;
+        }
+
+        /* cards */
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 8px 20px rgba(2, 6, 23, 0.45);
+            transition: transform var(--transition), box-shadow var(--transition);
+            min-height: 80px;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(2, 6, 23, 0.6);
+        }
+
+        .kpi {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .kpi .left {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .kpi .value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .kpi .label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* layout spans */
+        .span-3 {
+            grid-column: span 3;
+        }
+
+        .span-6 {
+            grid-column: span 6;
+        }
+
+        .span-4 {
+            grid-column: span 4;
+        }
+
+        .span-8 {
+            grid-column: span 8;
+        }
+
+        .span-12 {
+            grid-column: span 12;
+        }
+
+        /* revenue chart area */
+        .chart-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 160px;
+            display: block;
+        }
+
+        /* citizen table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .table th,
+        .table td {
+            text-align: left;
+            padding: 10px 8px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.03);
+            color: #d8edf8;
+        }
+
+        .table th {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .table tr:hover td {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 6px 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* sidebar collapsed state for small screens */
+        .app.collapsed {
+            grid-template-columns: 76px 1fr;
+        }
+
+        .app.collapsed .brand h1,
+        .app.collapsed .brand p,
+        .app.collapsed .nav .long-text {
+            display: none;
+        }
+
+        .app.collapsed .nav a {
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .app.collapsed .sidebar {
+            min-height: 60vh;
+        }
+
+        /* responsive */
+        @media (max-width:900px) {
+            .app {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            .sidebar {
+                order: 2;
+                min-height: unset;
+                display: none;
+            }
+
+            .app.show-sidebar .sidebar {
+                display: block;
+            }
+
+            .main {
+                order: 1;
+            }
+
+            .grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .span-3 {
+                grid-column: span 6;
+            }
+
+            .span-4 {
+                grid-column: span 3;
+            }
+
+            .span-6 {
+                grid-column: span 6;
+            }
+        }
+
+        /* small helpers */
+        .muted {
+            color: var(--muted);
+        }
+
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .space-between {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .small {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mini {
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 13px;
+        }
+
+        /* modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+        }
+
+        .modal {
+            background: linear-gradient(180deg, #071426, #071827);
+            border-radius: 12px;
+            padding: 18px;
+            width: 480px;
+            max-width: 94%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal h3 {
+            margin: 0 0 8px 0;
+        }
+
+        .modal .row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .close-btn {
+            margin-left: auto;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app" id="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="logo">Z</div>
+                <div>
+                    <h1>ZRA Admin</h1>
+                    <p class="small">Central Governance Panel</p>
+                </div>
+            </div>
+
+            <div class="nav">
+                <div class="section-title">Main</div>
+                <a href="#" data-route="overview"><span>📊</span><span class="long-text">Dashboard Overview</span></a>
+                <a href="#" data-route="citizens"><span>🧾</span><span class="long-text">Citizens Registry</span></a>
+                <a href="#" data-route="assets"><span>🏠</span><span class="long-text">Assets & Properties</span></a>
+                <a href="#" data-route="revenue"><span>💰</span><span class="long-text">Revenue Analytics</span></a>
+
+                <div class="section-title">Management</div>
+                <a href="#" data-route="requests"><span>✅</span><span class="long-text">Requests & Approvals</span></a>
+                <a href="#" data-route="lifeevents"><span>🗂️</span><span class="long-text">Life Events</span></a>
+                <a href="#" data-route="logs"><span>📜</span><span class="long-text">System Logs</span></a>
+                <a href="#" data-route="settings"><span>⚙️</span><span class="long-text">Settings</span></a>
+            </div>
+
+            <div style="height:10px"></div>
+            <div class="small">Quick actions</div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+                <button class="btn" id="export-csv">Export Citizens</button>
+                <button class="btn" id="toggle-theme">Theme</button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <div class="left-controls">
+                    <div class="hamburger" id="hamb">
+                        ☰
+                    </div>
+                    <div class="search">
+                        🔎 <input id="globalSearch" placeholder="Search citizens, assets, IDs..." />
+                    </div>
+                    <div class="controls">
+                        <div class="mini" id="dateRangeBtn">Last 30 days ▾</div>
+                    </div>
+                </div>
+
+                <div class="top-actions">
+                    <div class="pill small">Admin • Paul</div>
+                    <div class="avatar">P</div>
+                </div>
+            </div>
+
+            <!-- GRID -->
+            <section class="grid" id="gridRoot" style="margin-top:6px;">
+                <!-- KPIs -->
+                <div class="card span-3 kpi" style="grid-column: span 3;">
+                    <div class="left">
+                        <div style="font-size:26px; font-weight:700;">12,482</div>
+                        <div class="label muted">Registered Citizens</div>
+                    </div>
+                    <div class="right small muted">+2.1% MoM</div>
+                </div>
+
+                <div class="card span-3 kpi">
+                    <div class="left">
+                        <div class="value">8,291</div>
+                        <div class="label muted">Active Taxpayers</div>
+                    </div>
+                    <div class="right small muted">76% compliance</div>
+                </div>
+
+                <div class="card span-3 kpi">
+                    <div class="left">
+                        <div class="value">K 9.2M</div>
+                        <div class="label muted">Revenue (30d)</div>
+                    </div>
+                    <div class="right small muted">+6.8% YoY</div>
+                </div>
+
+                <div class="card span-3 kpi">
+                    <div class="left">
+                        <div class="value">147</div>
+                        <div class="label muted">Open Requests</div>
+                    </div>
+                    <div class="right small muted">3 urgent</div>
+                </div>
+
+                <!-- Revenue chart -->
+                <div class="card span-8 chart-wrap">
+                    <div class="space-between">
+                        <div>
+                            <div style="font-weight:700;">Revenue Overview</div>
+                            <div class="small muted">Monthly revenue trend (sample)</div>
+                        </div>
+                        <div class="controls">
+                            <select id="rangeSelect" class="mini">
+                                <option value="6">6 months</option>
+                                <option value="12" selected>12 months</option>
+                                <option value="24">24 months</option>
+                            </select>
+                            <button class="btn" id="downloadRevenue">Export CSV</button>
+                        </div>
+                    </div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+
+                <!-- Citizens table -->
+                <div class="card span-4" style="display:flex; flex-direction:column;">
+                    <div class="space-between">
+                        <div>
+                            <div style="font-weight:700;">Citizen Registry</div>
+                            <div class="small muted">Search and manage citizens</div>
+                        </div>
+                        <div class="controls">
+                            <input id="citizenQuick" placeholder="Filter by name or NRC" class="mini">
+                            <button class="btn" id="addCitizen">Add</button>
+                        </div>
+                    </div>
+
+                    <div style="overflow:auto; margin-top:10px;">
+                        <table class="table" id="citizenTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>NRC</th>
+                                    <th>Tax ID</th>
+                                    <th>Income</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                        <div class="small muted" id="tableCount">0 citizens</div>
+                        <div>
+                            <button class="btn" id="prevPage">Prev</button>
+                            <button class="btn" id="nextPage">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assets -->
+                <div class="card span-4">
+                    <div class="space-between">
+                        <div>
+                            <div style="font-weight:700;">Assets & Properties</div>
+                            <div class="small muted">Recently declared</div>
+                        </div>
+                        <div class="small muted">Flag suspicious →</div>
+                    </div>
+                    <ul id="assetList" style="list-style:none; padding:0; margin-top:12px;">
+                        <!-- assets injected here -->
+                    </ul>
+                </div>
+
+                <!-- Life events -->
+                <div class="card span-4">
+                    <div style="font-weight:700;">Life Events Monitor</div>
+                    <div class="small muted">Births • Deaths • Marriages</div>
+
+                    <div style="display:flex; gap:8px; margin-top:12px;">
+                        <div class="pill">Births: 324</div>
+                        <div class="pill">Deaths: 38</div>
+                        <div class="pill">Marriages: 132</div>
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <div class="small muted">Recent</div>
+                        <ul style="list-style:none; padding:0; margin:8px 0 0 0;">
+                            <li class="small">• 2025-10-20 — New birth registration (Lusaka)</li>
+                            <li class="small">• 2025-10-19 — Marriage registered (Kitwe)</li>
+                            <li class="small">• 2025-10-18 — Death certificate issued (Livingstone)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Requests -->
+                <div class="card span-6">
+                    <div class="space-between">
+                        <div>
+                            <div style="font-weight:700;">Requests & Approvals</div>
+                            <div class="small muted">Pending admin tasks</div>
+                        </div>
+                        <div><button class="btn" id="processAll">Process All</button></div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <ol id="requestList" style="margin:0; padding-left:18px;"></ol>
+                    </div>
+                </div>
+
+                <!-- System logs -->
+                <div class="card span-6">
+                    <div style="font-weight:700;">System Logs</div>
+                    <div class="small muted">Recent admin activity</div>
+                    <div style="max-height:150px; overflow:auto; margin-top:10px; font-size:13px;">
+                        <ul id="logList" style="padding-left:16px; margin:0;"></ul>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="card span-12">
+                    <div style="display:flex; gap:18px; align-items:center; justify-content:space-between;">
+                        <div>
+                            <div style="font-weight:700;">Settings</div>
+                            <div class="small muted">Manage roles, API keys, theme</div>
+                        </div>
+                        <div class="flex">
+                            <label class="small muted">Maintenance mode</label>
+                            <input type="checkbox" id="maintenanceToggle">
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <footer>ZRA Dashboard demo • Vanilla HTML/CSS/JS — sample data only</footer>
+
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div style="display:flex; align-items:center;">
+                <div
+                    style="width:64px; height:64px; border-radius:12px; background:linear-gradient(135deg,#7dd3fc,#60a5fa); display:flex; align-items:center; justify-content:center; font-weight:700; color:#022; margin-right:12px;">
+                    P</div>
+                <div>
+                    <h3 id="modalName">Paul Chilwalo</h3>
+                    <div class="small muted" id="modalNrc">NRC: 12345/67/8</div>
+                </div>
+                <div class="close-btn" id="modalClose">✖</div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div style="flex:1;">
+                    <div class="small muted">Tax ID</div>
+                    <div id="modalTax">ZA-00012345</div>
+
+                    <div class="small muted" style="margin-top:8px;">Income</div>
+                    <div id="modalIncome">K 24,000</div>
+
+                    <div class="small muted" style="margin-top:8px;">Declared Assets</div>
+                    <div id="modalAssets">House (Lusaka), Car</div>
+                </div>
+
+                <div style="flex:1;">
+                    <div class="small muted">Compliance Score</div>
+                    <div id="modalScore">78%</div>
+
+                    <div class="small muted" style="margin-top:8px;">Recent Activity</div>
+                    <ul id="modalActivity" style="margin:6px 0 0 0; padding-left:16px;">
+                        <li class="small">2025-10-15 — Updated address</li>
+                        <li class="small">2025-09-20 — Filed tax return</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ===== Demo data ===== */
+        const sampleCitizens = Array.from({ length: 52 }).map((_, i) => ({
+            id: i + 1,
+            name: ['Paul', 'Grace', 'John', 'Mary', 'Joseph', 'Anna', 'Mwila', 'Loveness'][i % 8] + ' ' + (['Chilwalo', 'Mwansa', 'Phiri', 'Zimba', 'Kabwe', 'Hansen'][i % 6]),
+            nrc: `${2000 + i}/${(i % 99).toString().padStart(2, '0')}/${(i % 9) + 1}`,
+            taxId: `ZA-${(10000 + i)}`,
+            income: Math.round((500 + (i % 15) * 1200) * 1),
+            status: (i % 3 === 0) ? 'Compliant' : (i % 3 === 1) ? 'Late' : 'Under Review'
+        }));
+
+        const sampleAssets = [
+            { owner: 'Paul Chilwalo', type: 'House', value: 'K 820,000', location: 'Lusaka' },
+            { owner: 'Grace Mwansa', type: 'Car', value: 'K 120,000', location: 'Kitwe' },
+            { owner: 'John Phiri', type: 'Commercial Lot', value: 'K 1,250,000', location: 'Ndola' },
+        ];
+
+        const sampleRequests = [
+            { id: 1, type: 'Tax Relief', name: 'Grace Mwansa', date: '2025-10-15' },
+            { id: 2, type: 'Asset Review', name: 'John Phiri', date: '2025-10-10' },
+            { id: 3, type: 'Identity Update', name: 'Joseph Zimba', date: '2025-09-29' },
+        ];
+
+        const sampleLogs = [
+            '2025-10-22 09:05 — Admin Paul created user Grace',
+            '2025-10-21 14:20 — Audit report generated',
+            '2025-10-20 10:40 — Asset flagged for review (ID: 2)'
+        ];
+
+        const revenueData12 = [420000, 380000, 410000, 430000, 460000, 490000, 520000, 480000, 530000, 560000, 600000, 920000];
+
+        /* ===== UI References ===== */
+        const app = document.getElementById('app');
+        const hamb = document.getElementById('hamb');
+        const sidebar = document.getElementById('sidebar');
+        const revenueCanvas = document.getElementById('revenueChart');
+        const rangeSelect = document.getElementById('rangeSelect');
+        const citizenTableBody = document.querySelector('#citizenTable tbody');
+        const tableCount = document.getElementById('tableCount');
+        const citizenQuick = document.getElementById('citizenQuick');
+        const globalSearch = document.getElementById('globalSearch');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalClose = document.getElementById('modalClose');
+        const modalName = document.getElementById('modalName');
+        const modalNrc = document.getElementById('modalNrc');
+        const modalTax = document.getElementById('modalTax');
+        const modalIncome = document.getElementById('modalIncome');
+        const modalAssets = document.getElementById('modalAssets');
+        const modalScore = document.getElementById('modalScore');
+        const modalActivity = document.getElementById('modalActivity');
+        const assetList = document.getElementById('assetList');
+        const requestList = document.getElementById('requestList');
+        const logList = document.getElementById('logList');
+        const exportCsvBtn = document.getElementById('export-csv');
+        const downloadRevenueBtn = document.getElementById('downloadRevenue');
+
+        /* ===== Sidebar toggle & responsive ===== */
+        hamb.addEventListener('click', () => {
+            if (window.innerWidth < 900) {
+                app.classList.toggle('show-sidebar');
+            } else {
+                app.classList.toggle('collapsed');
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 900) {
+                app.classList.remove('show-sidebar');
+            }
+        });
+
+        /* ===== Populate initial lists ===== */
+        function renderAssets() {
+            assetList.innerHTML = '';
+            sampleAssets.forEach(a => {
+                const li = document.createElement('li');
+                li.style.padding = '8px 0';
+                li.innerHTML = `<div style="display:flex; justify-content:space-between; gap:10px;">
+      <div><strong>${a.type}</strong> • <span class="small muted">${a.location}</span><div class="small muted">${a.owner}</div></div>
+      <div style="text-align:right"><div class="pill">${a.value}</div><div style="height:6px"></div><button class="btn" onclick="flagAsset('${a.owner}')">Flag</button></div>
+    </div>`;
+                assetList.appendChild(li);
+            });
+        }
+        function renderRequests() {
+            requestList.innerHTML = '';
+            sampleRequests.forEach(r => {
+                const li = document.createElement('li');
+                li.style.margin = '8px 0';
+                li.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;">
+      <div><strong>${r.type}</strong> — <span class="small muted">${r.name}</span><div class="small muted">${r.date}</div></div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" onclick="approveRequest(${r.id})">Approve</button>
+        <button class="btn" onclick="denyRequest(${r.id})">Deny</button>
+      </div>
+    </div>`;
+                requestList.appendChild(li);
+            });
+        }
+        function renderLogs() {
+            logList.innerHTML = '';
+            sampleLogs.forEach(l => {
+                const li = document.createElement('li');
+                li.className = 'small muted';
+                li.textContent = l;
+                logList.appendChild(li);
+            });
+        }
+        renderAssets();
+        renderRequests();
+        renderLogs();
+
+        /* ===== Citizens table with simple pagination/search ===== */
+        let currentPage = 1;
+        const pageSize = 8;
+        let currentList = [...sampleCitizens];
+
+        function renderTable() {
+            const start = (currentPage - 1) * pageSize;
+            const page = currentList.slice(start, start + pageSize);
+            citizenTableBody.innerHTML = '';
+            page.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><a href="#" class="name-link" data-id="${c.id}">${c.name}</a></td>
+      <td>${c.nrc}</td><td>${c.taxId}</td><td>K ${c.income.toLocaleString()}</td><td><span class="pill">${c.status}</span></td>`;
+                citizenTableBody.appendChild(tr);
+            });
+            tableCount.textContent = `${currentList.length} citizens • page ${currentPage}`;
+            // attach click events for names
+            document.querySelectorAll('.name-link').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const id = parseInt(a.dataset.id);
+                    openProfile(id);
+                });
+            });
+        }
+        renderTable();
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            const max = Math.ceil(currentList.length / pageSize);
+            if (currentPage < max) { currentPage++; renderTable(); }
+        });
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) { currentPage--; renderTable(); }
+        });
+
+        /* quick filter */
+        citizenQuick.addEventListener('input', (e) => {
+            const q = e.target.value.trim().toLowerCase();
+            currentList = sampleCitizens.filter(c => (c.name + ' ' + c.nrc + ' ' + c.taxId).toLowerCase().includes(q));
+            currentPage = 1; renderTable();
+        });
+        globalSearch.addEventListener('input', (e) => {
+            const q = e.target.value.trim().toLowerCase();
+            if (q.length === 0) { currentList = [...sampleCitizens]; renderTable(); return; }
+            // apply a broad search that also highlights assets
+            currentList = sampleCitizens.filter(c => (c.name + ' ' + c.nrc + ' ' + c.taxId).toLowerCase().includes(q));
+            currentPage = 1; renderTable();
+        });
+
+        /* modal functions */
+        function openProfile(id) {
+            const c = sampleCitizens.find(x => x.id === id);
+            if (!c) return;
+            modalName.textContent = c.name;
+            modalNrc.textContent = 'NRC: ' + c.nrc;
+            modalTax.textContent = c.taxId;
+            modalIncome.textContent = `K ${c.income.toLocaleString()}`;
+            modalAssets.textContent = sampleAssets.filter(a => a.owner.includes(c.name.split(' ')[0])).map(a => a.type).join(', ') || '—';
+            modalScore.textContent = (60 + (c.id % 40)) + '%';
+            modalActivity.innerHTML = '';
+            ['Filed tax return', 'Updated address', 'Declared asset'].forEach(x => {
+                const li = document.createElement('li'); li.className = 'small'; li.textContent = `2025-0${(c.id % 9) + 1}-10 — ${x}`; modalActivity.appendChild(li);
+            });
+            modalBackdrop.style.display = 'flex';
+        }
+        modalClose.addEventListener('click', () => modalBackdrop.style.display = 'none');
+        modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) modalBackdrop.style.display = 'none'; });
+
+        /* requests actions */
+        window.approveRequest = function (id) {
+            alert('Approved request #' + id);
+            // remove from list
+            const idx = sampleRequests.findIndex(r => r.id === id);
+            if (idx >= 0) sampleRequests.splice(idx, 1);
+            renderRequests();
+        };
+        window.denyRequest = function (id) {
+            if (confirm('Deny request #' + id + '?')) {
+                const idx = sampleRequests.findIndex(r => r.id === id);
+                if (idx >= 0) sampleRequests.splice(idx, 1);
+                sampleLogs.unshift(`${new Date().toISOString().slice(0, 19).replace('T', ' ')} — Request ${id} denied`);
+                renderRequests(); renderLogs();
+            }
+        };
+
+        window.flagAsset = function (owner) {
+            alert('Flagged asset owner: ' + owner);
+            sampleLogs.unshift(`${new Date().toISOString().slice(0, 19).replace('T', ' ')} — Asset flagged (${owner})`);
+            renderLogs();
+        };
+
+        /* export citizens CSV */
+        exportCsvBtn.addEventListener('click', () => {
+            downloadCSV(sampleCitizens, 'citizens.csv');
+        });
+        function downloadCSV(data, filename) {
+            const headers = ['id', 'name', 'nrc', 'taxId', 'income', 'status'];
+            const rows = data.map(r => [r.id, r.name, r.nrc, r.taxId, r.income, r.status].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        /* ===== Revenue chart (simple canvas drawing) ===== */
+        function drawChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            // adapt size properly
+            const DPR = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * DPR;
+            canvas.height = canvas.clientHeight * DPR;
+            ctx.scale(DPR, DPR);
+            ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            const padding = 30;
+            const max = Math.max(...data) * 1.1;
+            const min = Math.min(...data) * 0.8;
+            const len = data.length;
+
+            // draw grid lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                let y = padding + ((h - padding * 2) / 4) * i;
+                ctx.moveTo(padding, y);
+                ctx.lineTo(w - padding, y);
+            }
+            ctx.stroke();
+
+            // line path
+            ctx.beginPath();
+            for (let i = 0; i < len; i++) {
+                const x = padding + (i / (len - 1)) * (w - padding * 2);
+                const y = padding + (1 - (data[i] - min) / (max - min)) * (h - padding * 2);
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = 'rgba(30,144,255,0.95)';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // draw shadow area
+            ctx.lineTo(w - padding, h - padding);
+            ctx.lineTo(padding, h - padding);
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(0, padding, 0, h);
+            grad.addColorStop(0, 'rgba(30,144,255,0.14)');
+            grad.addColorStop(1, 'rgba(30,144,255,0.02)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // draw points
+            for (let i = 0; i < len; i++) {
+                const x = padding + (i / (len - 1)) * (w - padding * 2);
+                const y = padding + (1 - (data[i] - min) / (max - min)) * (h - padding * 2);
+                ctx.beginPath();
+                ctx.fillStyle = 'white';
+                ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // bottom labels
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '12px sans-serif';
+            for (let i = 0; i < len; i++) {
+                const x = padding + (i / (len - 1)) * (w - padding * 2);
+                if (len > 12 && i % 2 !== 0) continue;
+                ctx.fillText(`${i + 1}`, x - 6, h - 6);
+            }
+        }
+        function updateRevenue() {
+            const months = parseInt(rangeSelect.value, 10);
+            // generate simple synthetic data: scale the 12-month sample to requested months
+            let arr = [];
+            if (months === 12) arr = revenueData12.slice();
+            else {
+                for (let i = 0; i < months; i++) {
+                    arr.push(Math.round(300000 + Math.sin(i / 3) * 120000 + Math.random() * 160000));
+                }
+            }
+            drawChart(revenueCanvas, arr);
+        }
+        rangeSelect.addEventListener('change', updateRevenue);
+        window.addEventListener('resize', () => drawChart(revenueCanvas, revenueData12));
+        updateRevenue();
+
+        /* Download revenue CSV */
+        downloadRevenueBtn.addEventListener('click', () => {
+            // create simple CSV guess for months
+            const months = parseInt(rangeSelect.value, 10);
+            let arr = [];
+            for (let i = 0; i < months; i++) {
+                arr.push({ month: `M${i + 1}`, revenue: Math.round(300000 + Math.sin(i / 3) * 120000 + Math.random() * 160000) });
+            }
+            const csv = ['month,revenue', ...arr.map(r => `${r.month},${r.revenue}`)].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'revenue.csv'; a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        /* small utilities */
+        document.getElementById('processAll').addEventListener('click', () => {
+            alert('Processing all pending requests...');
+            while (sampleRequests.length) sampleRequests.pop();
+            renderRequests();
+        });
+
+        document.getElementById('addCitizen').addEventListener('click', () => {
+            const id = sampleCitizens.length + 1;
+            sampleCitizens.push({
+                id, name: 'New User ' + id, nrc: `${2000 + id}/00/1`, taxId: `ZA-${10000 + id}`, income: 4000, status: 'Under Review'
+            });
+            currentList = [...sampleCitizens]; renderTable();
+        });
+
+        /* initial attach: populate the citizens list for searching */
+        currentList = [...sampleCitizens];
+        renderTable();
+
+        /* tiny keyboard shortcuts */
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+                e.preventDefault();
+                globalSearch.focus();
+            }
+        });
+
+        /* small theme toggle (demo only) */
+        document.getElementById('toggle-theme').addEventListener('click', () => {
+            document.body.style.background = document.body.style.background.includes('#071226') ? 'linear-gradient(180deg,#001117 0%, #071427 60%)' : 'linear-gradient(180deg,#071226 0%, #081827 60%)';
+        });
+
+        /* Export currently visible citizens */
+        document.getElementById('export-csv').addEventListener('click', () => {
+            // export the current filtered list
+            downloadCSV(currentList, 'citizens_filtered.csv');
+        });
+    </script>
+</body>
+
+</html>
