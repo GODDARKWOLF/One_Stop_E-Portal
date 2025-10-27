@@ -18,7 +18,7 @@ def get_users():
     return users
 
 
-@router.get("/{user_id}")
+@router.get("/user/{user_id}")
 def get_user(user_id: str):
     user = user_collection.find_one({"_id": ObjectId(user_id)})
 

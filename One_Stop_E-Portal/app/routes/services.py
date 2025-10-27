@@ -1,3 +1,4 @@
+from bson import ObjectId
 from fastapi import APIRouter, HTTPException
 from app.database.connection import service_collection
 from app.models.service import Service
@@ -8,35 +9,31 @@ router = APIRouter()
 
 @router.post("/service")
 def create_service(service: Service):
-    service_dict = service.model_dump()
+    service_dict = Service.model_dump(service)
     result = service_collection.insert_one(service_dict)
-    return {"id": str(result.inserted_id), "message": "Service created successfully"}
+    return {'_id': str(result.inserted_id), 'message': 'Service created successfully'}
 
 
-@router.get("/services")
+@router.get("/service/{service_id}")
+def get_service(service_id: str):
+    service = service_collection.find_one({"_id": ObjectId(service_id)})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return service
+
+@router.put("/service/{service_id}")
+def update_service(service_id: str, service: Service):
+    service_dict = Service.model_dump(service)
+    result = service_collection.update_one({"_id": ObjectId(service_id)}, {"$set": service_dict})
+    return {'_id': result.inserted_id, 'message': 'Service updated successfully'}
+
+@router.delete("/{service_id}")
+def delete_service(service_id: str):
+    service_collection.delete_one({"_id": ObjectId(service_id)})
+    return {'message': 'Service deleted successfully'}
+
+@router.get("/service")
 def get_services():
-        services = list(service_collection.find({}, {"_id": 0}))
-        return {"services": services}
-
-
-@router.get("/services/{service_name}")
-def get_service(service_name: str):
-    user = service_collection.find_one({"service_name": service_name})
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    else:
-        service_name = str(user["service_name"])
-        return {"service_name": service_name}
-
-
-
-@router.delete("/service/{service_name}")
-def delete_service(service_name: str):
-    user = service_collection.find_one({"service_name": service_name})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    else:
-        service_collection.delete_one({"service_name": service_name})
-        return {"id": str(user.id)}
+    services = list(service_collection.find())
+    return services
 
