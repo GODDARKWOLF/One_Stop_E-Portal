@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post('/police')
 def register_officer(officer: PoliceUser):
-    officer_dict = officer.model_dump()
+    officer_dict = officer.model_dump(exclude_none=True)
     result = officer_collection.insert_one(officer_dict)
     return {'_id': str(result.inserted_id), 'message': 'success'}
 
