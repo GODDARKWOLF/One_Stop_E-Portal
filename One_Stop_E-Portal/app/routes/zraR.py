@@ -92,3 +92,37 @@ def assign_revenue_to_user(user_id: str, revenue_id: str):
 
     return {"message": "Revenue assigned to user", "user_id": user_id, "revenue_id": revenue_id}
 
+
+@router.get('/revenue/{user_id}')
+def get_user_revenue(user_id: str):
+    try:
+        oid = ObjectId(user_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid user id")
+    revenue = revenue_collection.find_one({"user_id": oid})
+    if not revenue:
+        raise HTTPException(status_code=404, detail="User not found")
+    revenue["_id"] = str(revenue["_id"])
+    return revenue
+
+
+@router.delete("/revenue/{revenue_id}")
+def delete_service(revenue_id: str):
+    try:
+        oid = ObjectId(revenue_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid service id")
+
+    result = revenue_collection.delete_one({"_id": oid})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {'message': 'Service deleted successfully'}
+
+
+
+"""
+These routes deal with citizen taxes 
+"""
+
+
+
