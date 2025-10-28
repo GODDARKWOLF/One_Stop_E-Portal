@@ -124,5 +124,6 @@ def delete_service(revenue_id: str):
 These routes deal with citizen taxes 
 """
 
-
+#@router.get('/citizen-taxes')
+#def get_citizen_taxes():
 
