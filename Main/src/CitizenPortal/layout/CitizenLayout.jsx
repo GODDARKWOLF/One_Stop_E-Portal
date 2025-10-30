@@ -11,6 +11,7 @@ import {
     faCog,
     faUser,
     faBars,
+    faChain,
     faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import './CitizenLayout.css';
@@ -31,7 +32,7 @@ const CitizenLayout = () => {
             label: "Documents"
         },
         {
-            path: "/citizen/tax-records",
+            path: "/citizen/Tax",
             icon: faFileInvoiceDollar,
             label: "Tax Records"
         },
@@ -54,6 +55,12 @@ const CitizenLayout = () => {
             path: "/citizen/settings",
             icon: faCog,
             label: "Settings"
+        },
+
+        {
+            path: "/citizen/citizenblockchain",
+            icon: faChain,
+            label: "Blockchain"
         }
     ];
 
@@ -62,7 +69,7 @@ const CitizenLayout = () => {
             <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className="sidebar-header">
                     <div className="logo">
-                        <h1>ZRA Portal</h1>
+                        <h1>Citizen Portal</h1>
                     </div>
                     <button
                         className="toggle-sidebar"

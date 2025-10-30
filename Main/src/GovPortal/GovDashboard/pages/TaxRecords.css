@@ -1,0 +1,148 @@
+/* src/GovPortal/GovDashboard/pages/TaxRecords.css */
+.gov-tax-page {
+    padding: 20px;
+    background: #f5f5f5;
+    min-height: 100vh;
+}
+
+.gov-tax-page h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.gov-tax-page table {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+.gov-tax-page thead {
+    background: #34495e;
+    color: white;
+}
+
+.gov-tax-page th,
+.gov-tax-page td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.gov-tax-page th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+.gov-tax-page tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.gov-tax-page tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Styles */
+.status {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.success {
+    background: #d1edff;
+    color: #0c5460;
+}
+
+.status.approved {
+    background: #d1edff;
+    color: #0c5460;
+}
+
+.status.failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-buttons button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.action-buttons button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.approve {
+    background: #28a745;
+    color: white;
+}
+
+.approve:hover {
+    background: #218838;
+}
+
+.reject {
+    background: #dc3545;
+    color: white;
+}
+
+.reject:hover {
+    background: #c82333;
+}
+
+.delete {
+    background: #6c757d;
+    color: white;
+}
+
+.delete:hover {
+    background: #5a6268;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gov-tax-page {
+        padding: 10px;
+    }
+
+    .gov-tax-page table {
+        font-size: 0.9em;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .action-buttons button {
+        width: 100%;
+        font-size: 0.8em;
+        padding: 5px 8px;
+    }
+}

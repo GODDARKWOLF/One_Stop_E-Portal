@@ -10,6 +10,7 @@ import {
     faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons';
 import ProfileCard from '../../components/ProfileCard/ProfileCard';
+import BlockchainSimulation from '../../components/Dashboard/BlockchainSimulation';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -94,7 +95,9 @@ const Dashboard = () => {
         <div className="dashboard-container">
             <div className="dashboard-header">
                 <h1>Welcome Back, John</h1>
-                <p className="text-secondary">Here's an overview of your tax profile and recent activities</p>
+                <p className="text-secondary">
+                    Here's an overview of your tax profile and recent activities
+                </p>
             </div>
 
             <div className="dashboard-grid">
@@ -106,7 +109,11 @@ const Dashboard = () => {
                     <h2 className="section-title">Quick Stats</h2>
                     <div className="stats-grid">
                         {quickStats.map((stat, index) => (
-                            <div key={index} className="stat-card card slide-in-up" style={{ "--delay": `${index * 0.1}s` }}>
+                            <div
+                                key={index}
+                                className="stat-card card slide-in-up"
+                                style={{ "--delay": `${index * 0.1}s` }}
+                            >
                                 <FontAwesomeIcon icon={stat.icon} className={`stat-icon ${stat.color}`} />
                                 <div className="stat-content">
                                     <div className="stat-header">
@@ -142,6 +149,11 @@ const Dashboard = () => {
                         </button>
                     </div>
                 </div>
+            </div>
+
+            {/* Blockchain Simulation Section */}
+            <div className="blockchain-section">
+                <BlockchainSimulation />
             </div>
         </div>
     );

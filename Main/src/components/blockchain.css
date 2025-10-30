@@ -1,0 +1,62 @@
+/* src/components/blockchain.css */
+.blockchain-sim {
+    background: linear-gradient(180deg, #07182f, #0b2442);
+    color: #dceeff;
+    padding: 14px;
+    border-radius: 10px;
+    margin-top: 16px;
+}
+
+.blockchain-sim h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+.chain-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 8px 2px;
+}
+
+.block-card {
+    min-width: 220px;
+    background: linear-gradient(180deg, #0f2a4a, #07203a);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    transform-origin: left center;
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.block-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(16, 74, 140, 0.35);
+}
+
+.block-header {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #bfe1ff;
+}
+
+.small {
+    font-size: 12px;
+}
+
+.muted {
+    color: #9fb2d3;
+}
+
+.timestamp {
+    color: #7ca7ff;
+    margin-top: 8px;
+}
+
+.hash {
+    color: #9fd0ff;
+    margin-top: 6px;
+    font-family: monospace;
+    font-size: 12px;
+}

@@ -3,12 +3,14 @@ import { NavLink } from 'react-router-dom'
 
 const GovSidebarNav = ({ collapsed }) => {
     const navLinks = [
-        { path: '/gov/dashboard', icon: 'fa-solid fa-chart-line', label: 'Dashboard' },
+        { path: '/gov', icon: 'fa-solid fa-chart-line', label: 'Dashboard' },
         { path: '/gov/citizens', icon: 'fa-solid fa-users', label: 'Citizens' },
-        { path: '/gov/revenue', icon: 'fa-solid fa-coins', label: 'Revenue' },
+        { path: '/gov/tax-records', icon: 'fa-solid fa-coins', label: 'Revenue' },
         { path: '/gov/reports', icon: 'fa-solid fa-file-alt', label: 'Reports' },
         { path: '/gov/alerts', icon: 'fa-solid fa-bell', label: 'Alerts' },
-        { path: '/gov/settings', icon: 'fa-solid fa-gear', label: 'Settings' }
+        { path: '/gov/settings', icon: 'fa-solid fa-gear', label: 'Settings' },
+        { path: '/gov/blockchain', icon: 'fa-solid fa-link', label: 'Blockchain' }
+
     ]
 
     return (

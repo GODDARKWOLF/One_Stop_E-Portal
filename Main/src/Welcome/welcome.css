@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.welcome-container {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(145deg, #0a1832, #132a52);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+.welcome-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    width: 90%;
+    max-width: 480px;
+    color: #e5edff;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.welcome-title span {
+    color: #00aaff;
+}
+
+.welcome-sub {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin-bottom: 28px;
+    line-height: 1.6;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-form h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #cfe3ff;
+}
+
+.auth-form input {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    outline: none;
+    font-size: 0.95rem;
+    transition: background 0.3s;
+}
+
+.auth-form input:focus {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.auth-btn {
+    padding: 12px;
+    background: #00aaff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.auth-btn:hover {
+    background: #008ed1;
+    transform: scale(1.02);
+}
+
+.toggle-text {
+    margin-top: 18px;
+    font-size: 0.9rem;
+    color: #a5b8e2;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: #00aaff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.toggle-btn:hover {
+    color: #45c3ff;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeIn {
+    animation: fadeInUp 0.8s ease;
+}
+
+.slideUp {
+    animation: fadeInUp 1s ease;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .welcome-title {
+        font-size: 1.6rem;
+    }
+
+    .welcome-card {
+        padding: 28px;
+    }
+}

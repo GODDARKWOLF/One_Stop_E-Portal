@@ -1,0 +1,112 @@
+.chain-page {
+    padding: 40px;
+    background: #f9fafc;
+    min-height: 100vh;
+}
+
+.chain-page h1 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+    color: #004aad;
+}
+
+.muted {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.empty {
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.1rem;
+    margin-top: 60px;
+}
+
+.chain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    position: relative;
+}
+
+.chain-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+    position: relative;
+}
+
+.chain-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.block-icon {
+    font-size: 30px;
+}
+
+.chain-link {
+    width: 3px;
+    height: 50px;
+    background: linear-gradient(to bottom, #004aad, #2563eb);
+    margin-top: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}
+
+.chain-body {
+    flex: 1;
+}
+
+.chain-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.chain-meta p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #374151;
+}
+
+.mono {
+    font-family: monospace;
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.hash {
+    color: #047857;
+}
+
+.prev {
+    color: #9ca3af;
+}
+
+.status.success {
+    color: #10b981;
+    font-weight: 600;
+}

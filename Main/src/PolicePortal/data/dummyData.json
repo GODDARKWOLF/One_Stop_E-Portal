@@ -1,0 +1,125 @@
+{
+  "incidents": [
+    {
+      "title": "Burglary - Chawama",
+      "lat": 120,
+      "lon": 45,
+      "severity": "Moderate"
+    },
+    {
+      "title": "Assault - Roma",
+      "lat": 210,
+      "lon": 120,
+      "severity": "Critical"
+    },
+    {
+      "title": "Theft - Lusaka CBD",
+      "lat": 40,
+      "lon": 200,
+      "severity": "Moderate"
+    },
+    {
+      "title": "Vandalism - Kabwata",
+      "lat": 300,
+      "lon": 80,
+      "severity": "Info"
+    }
+  ],
+  "alerts": [
+    {
+      "title": "Suspicious vehicle reported",
+      "time": "2025-10-24 21:12",
+      "severity": "Warning"
+    },
+    {
+      "title": "Armed robbery in progress",
+      "time": "2025-10-24 20:03",
+      "severity": "Critical"
+    },
+    {
+      "title": "Traffic accident - Ring Road",
+      "time": "2025-10-24 19:40",
+      "severity": "Info"
+    }
+  ],
+  "officers": [
+    {
+      "id": 1,
+      "name": "Inspector Paul",
+      "rank": "Inspector",
+      "status": "On Duty",
+      "station": "Central"
+    },
+    {
+      "id": 2,
+      "name": "Sergeant Grace",
+      "rank": "Sergeant",
+      "status": "On Duty",
+      "station": "West"
+    },
+    {
+      "id": 3,
+      "name": "Constable John",
+      "rank": "Constable",
+      "status": "Off Duty",
+      "station": "East"
+    }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "title": "Break-in at shop",
+      "location": "Chawama",
+      "time": "2025-10-24 18:00",
+      "severity": "Moderate"
+    },
+    {
+      "id": 2,
+      "title": "Assault near market",
+      "location": "Roma",
+      "time": "2025-10-24 17:00",
+      "severity": "Critical"
+    }
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "title": "Case #2025-128 \u2014 Burglary",
+      "status": "Open",
+      "officers": [
+        "Inspector Paul",
+        "Sergeant Grace"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Case #2025-129 \u2014 Robbery",
+      "status": "Investigating",
+      "officers": [
+        "Constable John"
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "id": 1,
+      "location": "Main St & 3rd Ave"
+    },
+    {
+      "id": 2,
+      "location": "Lusaka Mall"
+    },
+    {
+      "id": 3,
+      "location": "Ring Road"
+    },
+    {
+      "id": 4,
+      "location": "Chawama"
+    },
+    {
+      "id": 5,
+      "location": "Roma"
+    }
+  ]
+}

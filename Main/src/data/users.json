@@ -1,0 +1,17 @@
+[
+    {
+        "role": "citizen",
+        "email": "citizen@example.com",
+        "password": "123456"
+    },
+    {
+        "role": "zra",
+        "email": "zra@example.com",
+        "password": "123456"
+    },
+    {
+        "role": "police",
+        "email": "police@example.com",
+        "password": "123456"
+    }
+]

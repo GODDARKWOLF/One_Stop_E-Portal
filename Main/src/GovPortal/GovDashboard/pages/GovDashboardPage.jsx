@@ -57,48 +57,46 @@ const GovDashboardPage = () => {
     const formatCurrency = (num) => 'K' + formatNumber(num)
 
     return (
-        <GovDashboardLayout>
-            <div className="gov-dashboard">
-                {/* Stats Grid */}
-                <div className="gov-stats-grid">
-                    <div className="gov-stat-card">
-                        <div className="gov-stat-value success animate-count">
-                            {formatNumber(stats.citizens)}
-                        </div>
-                        <div className="gov-stat-label">Total Registered Citizens</div>
+        <div className="gov-dashboard">
+            {/* Stats Grid */}
+            <div className="gov-stats-grid">
+                <div className="gov-stat-card">
+                    <div className="gov-stat-value success animate-count">
+                        {formatNumber(stats.citizens)}
                     </div>
-
-                    <div className="gov-stat-card">
-                        <div className="gov-stat-value animate-count">
-                            {formatCurrency(stats.revenue)}
-                        </div>
-                        <div className="gov-stat-label">Revenue Collected</div>
-                    </div>
-
-                    <div className="gov-stat-card">
-                        <div className="gov-stat-value warning animate-count">
-                            {stats.applications}
-                        </div>
-                        <div className="gov-stat-label">Pending Applications</div>
-                    </div>
-
-                    <div className="gov-stat-card">
-                        <div className="gov-stat-value danger animate-count">
-                            {stats.alerts}
-                        </div>
-                        <div className="gov-stat-label">Fraud Alerts</div>
-                    </div>
+                    <div className="gov-stat-label">Total Registered Citizens</div>
                 </div>
 
-                {/* Main Content Grid */}
-                <div className="gov-content-grid">
-                    <GovOverviewPanel />
-                    <GovRevenueStats />
-                    <GovRegisteredCitizens />
-                    <GovReportsPanel />
+                <div className="gov-stat-card">
+                    <div className="gov-stat-value animate-count">
+                        {formatCurrency(stats.revenue)}
+                    </div>
+                    <div className="gov-stat-label">Revenue Collected</div>
+                </div>
+
+                <div className="gov-stat-card">
+                    <div className="gov-stat-value warning animate-count">
+                        {stats.applications}
+                    </div>
+                    <div className="gov-stat-label">Pending Applications</div>
+                </div>
+
+                <div className="gov-stat-card">
+                    <div className="gov-stat-value danger animate-count">
+                        {stats.alerts}
+                    </div>
+                    <div className="gov-stat-label">Fraud Alerts</div>
                 </div>
             </div>
-        </GovDashboardLayout>
+
+            {/* Main Content Grid */}
+            <div className="gov-content-grid">
+                <GovOverviewPanel />
+                <GovRevenueStats />
+                <GovRegisteredCitizens />
+                <GovReportsPanel />
+            </div>
+        </div>
     )
 }
 
