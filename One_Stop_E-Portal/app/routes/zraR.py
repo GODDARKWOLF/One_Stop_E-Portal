@@ -1,7 +1,7 @@
 from bson.errors import InvalidId
 from fastapi import HTTPException, APIRouter
 from app.database.connection import employee_collection, revenue_collection, citizen_tax_collection, alert_collection, criminal_record, user_collection
-from app.models.zra import ZraUser, ZraRevenue
+from app.models.zra import ZraUser, ZraRevenue #, TotalTax
 from bson import ObjectId
 
 
@@ -93,30 +93,31 @@ def assign_revenue_to_user(user_id: str, revenue_id: str):
     return {"message": "Revenue assigned to user", "user_id": user_id, "revenue_id": revenue_id}
 
 
-@router.get('/revenue/{user_id}')
-def get_user_revenue(user_id: str):
+@router.get('/revenue/{revenue_id}')
+def get_user_revenue(revenue_id: str):
+    try:
+        oid = ObjectId(revenue_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid user id")
+
+    user = user_collection.find_one({"_id": oid})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user["_id"] = str(user["_id"])
+    return user
+
+
+@router.delete("/revenue/{user_id}")
+def delete_service(user_id: str):
     try:
         oid = ObjectId(user_id)
     except InvalidId:
         raise HTTPException(status_code=400, detail="Invalid user id")
-    revenue = revenue_collection.find_one({"user_id": oid})
-    if not revenue:
-        raise HTTPException(status_code=404, detail="User not found")
-    revenue["_id"] = str(revenue["_id"])
-    return revenue
-
-
-@router.delete("/revenue/{revenue_id}")
-def delete_service(revenue_id: str):
-    try:
-        oid = ObjectId(revenue_id)
-    except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid service id")
 
     result = revenue_collection.delete_one({"_id": oid})
     if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Service not found")
-    return {'message': 'Service deleted successfully'}
+        raise HTTPException(status_code=404, detail="revenue document not found")
+    return {'message': 'revenue document deleted successfully'}
 
 
 
@@ -124,6 +125,13 @@ def delete_service(revenue_id: str):
 These routes deal with citizen taxes 
 """
 
-#@router.get('/citizen-taxes')
-#def get_citizen_taxes():
+# @router.post('/citizen-taxes')
+# def create_citizen_taxes(total: TotalTax):
+#     total_dict = total.model_dump(exclude_none=True)
+#     result = citizen_tax_collection.insert_one(total_dict)
+#     return {'message': 'citizen taxes created successfully'}
 
+
+# @router.post('/total-taxes')
+# def create_total_taxes(total: TotalTax):
+#
