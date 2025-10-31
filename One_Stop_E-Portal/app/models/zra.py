@@ -1,5 +1,6 @@
-from bson import ObjectId
-from pydantic import BaseModel, EmailStr
+from datetime import *
+#from bson import ObjectId
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
 
@@ -18,6 +19,13 @@ class ZraRevenue(BaseModel):
     monthly_salary: float = 0
     tax_collected: float = 0
     remaining_salary: float = monthly_salary - tax_collected
-    # optional reference to a user (stored in DB as ObjectId)
     user_id: Optional[str] = None
+    date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# class TotalTax(BaseModel):
+#     id: Optional[str] = None
+#     year: date
+#     monthly_collection: list[6]
+#     total_sum: float = 0
 
