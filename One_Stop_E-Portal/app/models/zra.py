@@ -23,9 +23,17 @@ class ZraRevenue(BaseModel):
     date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-# class TotalTax(BaseModel):
-#     id: Optional[str] = None
-#     year: date
-#     monthly_collection: list[6]
-#     total_sum: float = 0
+class TotalTax(BaseModel):
+     id: Optional[str] = None
+     year: date
+     monthly_collection: list[float] = Field(default_factory=lambda: [0.0] * 12)
+     total_sum: float = 0
 
+
+class Alert(BaseModel):
+    id: Optional[str] = None
+    user_id: Optional[str] = None
+    message: str
+    read: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    

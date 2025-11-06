@@ -1,11 +1,27 @@
 from bson.errors import InvalidId
 from fastapi import HTTPException, APIRouter
 from app.database.connection import employee_collection, revenue_collection, citizen_tax_collection, alert_collection, user_collection
-from app.models.zra import ZraUser, ZraRevenue #, TotalTax
+from app.models.zra import ZraUser, ZraRevenue, Alert , TotalTax
 from bson import ObjectId
+from datetime import *
 
 
 router = APIRouter()
+
+
+def _serialize_bson(obj):
+    """Simple recursive serializer for ObjectId and nested structures."""
+    from bson import ObjectId
+
+    if obj is None:
+        return None
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    if isinstance(obj, dict):
+        return {k: _serialize_bson(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_serialize_bson(v) for v in obj]
+    return obj
 
 
 
@@ -133,13 +149,88 @@ def delete_service(revenue_id: str):
 These routes deal with citizen taxes 
 """
 
-# @router.post('/citizen-taxes')
-# def create_citizen_taxes(total: TotalTax):
-#     total_dict = total.model_dump(exclude_none=True)
-#     result = citizen_tax_collection.insert_one(total_dict)
-#     return {'message': 'citizen taxes created successfully'}
+@router.get("/taxes/{year}", response_model=TotalTax)
+def get_yearly_tax_totals(year: int):
+    if year < 1900 or year > 9999:
+        raise HTTPException(status_code=400, detail="Invalid year")
+
+    # Build date range for the year (timezone-aware)
+    start = datetime(year, 1, 1, tzinfo=timezone.utc)
+    end = datetime(year + 1, 1, 1, tzinfo=timezone.utc)
+
+    pipeline = [
+        {"$match": {"date": {"$gte": start, "$lt": end}}},
+        {"$group": {
+            "_id": {"month": {"$month": "$date"}},   # Mongo returns 1..12
+            "month_total": {"$sum": {"$ifNull": ["$tax_collected", 0]}}
+        }},
+        {"$project": {"month": "$_id.month", "month_total": 1, "_id": 0}}
+    ]
+
+    try:
+        results = list(revenue_collection.aggregate(pipeline))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"DB error: {e}")
+
+    # results is list of { "month": 1..12, "month_total": <sum> }
+    monthly = [0.0] * 12
+    for r in results:
+        m = int(r["month"]) - 1
+        monthly[m] = float(r.get("month_total", 0.0))
+
+    total = sum(monthly)
+
+    return TotalTax(year=year, monthly_collection=monthly, total_sum=total)
 
 
-# @router.post('/total-taxes')
-# def create_total_taxes(total: TotalTax):
-#
+"""
+Routes that involve alerting the employees
+"""
+
+@router.post('/alert')
+def create_alert(alert: Alert):
+    alert_dict = alert.model_dump(exclude_none=True)
+    result = alert_collection.insert_one(alert_dict)
+    return {'_id': str(result.inserted_id), 'message': 'alert created'}
+
+
+@router.get('/alerts')
+def list_alerts():
+    alerts = list(alert_collection.find())
+    return [_serialize_bson(a) for a in alerts]
+
+
+@router.get('/alerts/{alert_id}')
+def get_alert(alert_id: str):
+    try:
+        oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail='Invalid alert id')
+    a = alert_collection.find_one({'_id': oid})
+    if not a:
+        raise HTTPException(status_code=404, detail='Alert not found')
+    return _serialize_bson(a)
+
+
+@router.delete('/alerts/{alert_id}')
+def delete_alert(alert_id: str):
+    try:
+        oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail='Invalid alert id')
+    result = alert_collection.delete_one({'_id': oid})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail='Alert not found')
+    return {'message': 'Alert deleted'}
+
+
+@router.post('/alerts/{alert_id}/ack')
+def acknowledge_alert(alert_id: str):
+    try:
+        oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail='Invalid alert id')
+    result = alert_collection.update_one({'_id': oid}, {'$set': {'read': True}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail='Alert not found')
+    return {'message': 'Alert acknowledged'}
