@@ -22,8 +22,8 @@ class CriminalRecord(BaseModel):
     id: Optional[str] = None
     User_id: Optional[int] = None
     crime_committed: str = None
-    Gender: str
-    Age: int
+    gender: str
+    age: int
     sentence: Optional[str] = None
 
 

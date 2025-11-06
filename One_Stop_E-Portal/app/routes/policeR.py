@@ -143,14 +143,14 @@ def update_service(report_id: str, report: CriminalRecord):
     return {'_id': report_id, 'modified_count': result.modified_count, 'message': 'Service updated successfully'}
 
 
-@router.get('/criminalrecord')
+@router.get('/criminalrecord/{report_id}')
 def get_reports(report_id: str):
     try:
         oid = ObjectId(report_id)
     except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid user id")
+        raise HTTPException(status_code=400, detail="Invalid report id")
 
-    user = user_collection.find_one({"_id": oid})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return _serialize_bson(user)
+    report = criminal_record.find_one({"_id": oid})
+    if not report:
+        raise HTTPException(status_code=404, detail="report not found")
+    return _serialize_bson(report)
