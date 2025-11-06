@@ -1,6 +1,6 @@
 from bson.errors import InvalidId
 from fastapi import HTTPException, APIRouter
-from app.database.connection import employee_collection, revenue_collection, citizen_tax_collection, alert_collection, criminal_record, user_collection
+from app.database.connection import employee_collection, revenue_collection, citizen_tax_collection, alert_collection, user_collection
 from app.models.zra import ZraUser, ZraRevenue #, TotalTax
 from bson import ObjectId
 
@@ -98,21 +98,29 @@ def get_user_revenue(revenue_id: str):
     try:
         oid = ObjectId(revenue_id)
     except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid user id")
+        raise HTTPException(status_code=400, detail="Invalid revenue id")
 
-    user = user_collection.find_one({"_id": oid})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    user["_id"] = str(user["_id"])
-    return user
+    revenue = revenue_collection.find_one({"_id": oid})
+    if not revenue:
+        raise HTTPException(status_code=404, detail="Revenue document not found")
+
+    # Convert ObjectId fields to strings for JSON
+    revenue["_id"] = str(revenue["_id"])
+    if revenue.get("user_id") is not None:
+        try:
+            revenue["user_id"] = str(revenue["user_id"])
+        except Exception:
+            # leave as-is if not an ObjectId
+            pass
+    return revenue
 
 
-@router.delete("/revenue/{user_id}")
-def delete_service(user_id: str):
+@router.delete("/revenue/{revenue_id}")
+def delete_service(revenue_id: str):
     try:
-        oid = ObjectId(user_id)
+        oid = ObjectId(revenue_id)
     except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid user id")
+        raise HTTPException(status_code=400, detail="Invalid revenue id")
 
     result = revenue_collection.delete_one({"_id": oid})
     if result.deleted_count == 0:
