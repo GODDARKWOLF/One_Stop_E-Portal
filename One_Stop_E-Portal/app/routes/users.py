@@ -30,7 +30,6 @@ def create_user(user: User):
 
 @router.get("/user")
 def get_users():
-    # Return all users and make sure any ObjectId values are converted to strings
     users_cursor = user_collection.find()
     users = [_serialize_bson(u) for u in users_cursor]
     return users
