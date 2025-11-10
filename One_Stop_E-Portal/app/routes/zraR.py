@@ -187,11 +187,39 @@ def get_yearly_tax_totals(year: int):
 Routes that involve alerting the employees
 """
 
-@router.post('/alert')
+@router.post("/alerts")
 def create_alert(alert: Alert):
     alert_dict = alert.model_dump(exclude_none=True)
     result = alert_collection.insert_one(alert_dict)
-    return {'_id': str(result.inserted_id), 'message': 'alert created'}
+    alert_dict["_id"] = str(result.inserted_id)
+    return {"_id": str(result.inserted_id), "message": "alert created", "alert": _serialize_bson(alert_dict)}
+
+
+@router.post('/alert/assign')
+def assign_revenue_to_user(user_id: str, alert_id: str):
+    try:
+        user_oid = ObjectId(user_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid user id")
+    try:
+        alert_oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid alert id")
+
+
+    user = user_collection.find_one({"_id": user_oid})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    alert = alert_collection.find_one({"_id": alert_oid})
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert document not found")
+
+    alert_collection.update_one({"_id": alert_oid}, {"$set": {"user_id": user_oid}})
+
+    user_collection.update_one({"_id": user_oid}, {"$addToSet": {"alert": alert_oid}})
+
+    return {"message": "Alert assigned to user", "user_id": user_id, "alert_id": alert_id}
 
 
 @router.get('/alerts')
@@ -224,7 +252,7 @@ def delete_alert(alert_id: str):
     return {'message': 'Alert deleted'}
 
 
-@router.post('/alerts/{alert_id}/ack')
+@router.post('/alerts/ack/{alert_id}')
 def acknowledge_alert(alert_id: str):
     try:
         oid = ObjectId(alert_id)

@@ -32,8 +32,8 @@ class TotalTax(BaseModel):
 
 class Alert(BaseModel):
     id: Optional[str] = None
-    user_id: Optional[str] = None
-    message: str
+    message: str = "This individual is committing tax fraud"
     read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    user_id: Optional[str] = None
     
