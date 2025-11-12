@@ -5,4 +5,4 @@ Frontend: React
 Backend: Python
 Database: MongoDB
 Security: Blockchain
-API: RestFul API
+API: Fast API
