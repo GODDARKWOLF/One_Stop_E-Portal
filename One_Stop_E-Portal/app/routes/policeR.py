@@ -1,8 +1,9 @@
 from types import MethodType
 
 from fastapi import APIRouter, HTTPException
-from app.database.connection import officer_collection, crime_collection, criminal_record, user_collection
+from app.database.connection import officer_collection, crime_collection, criminal_record, user_collection, alert_collection
 from app.models.police import PoliceUser, CrimeReport, CriminalRecord
+from app.models.zra import Alert
 from bson import ObjectId
 from bson.errors import InvalidId
 
@@ -11,8 +12,7 @@ router = APIRouter()
 
 def _serialize_bson(obj):
     """Recursively convert BSON types (ObjectId) inside dicts/lists to JSON-serializable types."""
-    from bson import ObjectId
-
+    
     if obj is None:
         return None
     if isinstance(obj, ObjectId):
@@ -154,3 +154,83 @@ def get_reports(report_id: str):
     if not report:
         raise HTTPException(status_code=404, detail="report not found")
     return _serialize_bson(report)
+
+
+"""Alerts"""
+
+@router.post("/alerts")
+def create_alert(alert: Alert):
+    alert_dict = alert.model_dump(exclude_none=True)
+    result = alert_collection.insert_one(alert_dict)
+    alert_dict["_id"] = str(result.inserted_id)
+    return {"_id": str(result.inserted_id), "message": "alert created", "alert": _serialize_bson(alert_dict)}
+
+
+@router.post('/alert/assign')
+def assign_revenue_to_user(user_id: str, alert_id: str):
+    try:
+        user_oid = ObjectId(user_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid user id")
+    try:
+        alert_oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid alert id")
+
+
+    user = user_collection.find_one({"_id": user_oid})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    alert = alert_collection.find_one({"_id": alert_oid})
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert document not found")
+
+    alert_collection.update_one({"_id": alert_oid}, {"$set": {"user_id": user_oid}})
+
+    user_collection.update_one({"_id": user_oid}, {"$addToSet": {"alert": alert_oid}})
+
+    return {"message": "Alert assigned to user", "user_id": user_id, "alert_id": alert_id}
+
+
+@router.get('/alerts')
+def list_alerts():
+    alerts = list(alert_collection.find())
+    return [_serialize_bson(a) for a in alerts]
+
+
+@router.get('/alerts/{alert_id}')
+def get_alert(alert_id: str):
+    try:
+        oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail='Invalid alert id')
+    a = alert_collection.find_one({'_id': oid})
+    if not a:
+        raise HTTPException(status_code=404, detail='Alert not found')
+    return _serialize_bson(a)
+
+
+@router.delete('/alerts/{alert_id}')
+def delete_alert(alert_id: str):
+    try:
+        oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail='Invalid alert id')
+    result = alert_collection.delete_one({'_id': oid})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail='Alert not found')
+    return {'message': 'Alert deleted'}
+
+
+@router.post('/alerts/ack/{alert_id}')
+def acknowledge_alert(alert_id: str):
+    try:
+        oid = ObjectId(alert_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail='Invalid alert id')
+    result = alert_collection.update_one({'_id': oid}, {'$set': {'read': True}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail='Alert not found')
+    return {'message': 'Alert acknowledged'}
+

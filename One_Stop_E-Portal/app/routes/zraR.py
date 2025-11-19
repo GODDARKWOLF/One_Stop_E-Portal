@@ -1,6 +1,6 @@
 from bson.errors import InvalidId
 from fastapi import HTTPException, APIRouter
-from app.database.connection import employee_collection, revenue_collection, citizen_tax_collection, alert_collection, user_collection
+from app.database.connection import employee_collection, revenue_collection, alert_collection, user_collection
 from app.models.zra import ZraUser, ZraRevenue, Alert , TotalTax
 from bson import ObjectId
 from datetime import *
