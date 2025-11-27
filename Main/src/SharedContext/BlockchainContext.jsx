@@ -12,51 +12,51 @@ export const useBlockchain = () => {
 };
 
 export const BlockchainProvider = ({ children }) => {
-    const [blockchain, setBlockchain] = useState(() => {
-        const saved = localStorage.getItem("blockchainLedger");
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            // If it's the old format, convert to new format
-            if (parsed.length > 0 && !parsed[0].index) {
-                return createGenesisBlock(); // Start fresh with new format
-            }
-            return parsed;
-        }
-        return createGenesisBlock();
+    const [blockchains, setBlockchains] = useState(() => {
+        const savedZRA = localStorage.getItem("zraBlockchainLedger");
+        const savedReports = localStorage.getItem("reportsBlockchainLedger");
+
+        return {
+            zra: savedZRA ? JSON.parse(savedZRA) : createGenesisBlock("ZRA Tax System"),
+            reports: savedReports ? JSON.parse(savedReports) : createGenesisBlock("Reports System")
+        };
     });
 
     const [isChainValid, setIsChainValid] = useState(true);
 
     // Create genesis block
-    function createGenesisBlock() {
+    function createGenesisBlock(systemName) {
         return [{
             index: 0,
             timestamp: new Date().toLocaleString(),
             data: {
                 type: "system",
-                message: "Genesis Block - ZRA Tax System Started"
+                message: `Genesis Block - ${systemName} Started`
             },
             previousHash: "0",
-            hash: "genesis-block-hash-0000",
+            hash: `genesis-block-${systemName.toLowerCase()}-0000`,
             nonce: 0
         }];
     }
 
     // persist to localStorage
     useEffect(() => {
-        localStorage.setItem("blockchainLedger", JSON.stringify(blockchain));
-    }, [blockchain]);
+        localStorage.setItem("zraBlockchainLedger", JSON.stringify(blockchains.zra));
+        localStorage.setItem("reportsBlockchainLedger", JSON.stringify(blockchains.reports));
+    }, [blockchains]);
 
-    // Simple hash function (simplified for demo)
     const calculateHash = (index, timestamp, data, previousHash, nonce) => {
-        return `hash-${index}-${timestamp}-${JSON.stringify(data).substring(0, 50)}-${previousHash}-${nonce}`;
+        // Defensive: ensure all are strings
+        const safeData = typeof data === 'string' ? data : JSON.stringify(data || '');
+        const safePrevHash = typeof previousHash === 'string' ? previousHash : String(previousHash || '0');
+        return `hash-${index}-${timestamp}-${safeData.substring(0, 50)}-${safePrevHash}-${nonce}`;
     };
 
     // Create new block
     const createNewBlock = (data) => {
         const previousBlock = blockchain[blockchain.length - 1];
         const newIndex = previousBlock.index + 1;
-        const timestamp = new Date().toLocaleString();
+        const timestamp = new Date().toISOString();
         const nonce = Math.floor(Math.random() * 1000);
 
         const newBlock = {
@@ -69,6 +69,33 @@ export const BlockchainProvider = ({ children }) => {
         };
 
         return newBlock;
+    };
+
+    // Add a generic event/block to the chain (used by ReportsContext for events)
+    const addBlock = (event, type = 'reports') => {
+        const chain = type === 'zra' ? blockchains.zra : blockchains.reports;
+        const previousBlock = chain[chain.length - 1];
+        const newIndex = previousBlock.index + 1;
+        const timestamp = new Date().toISOString();
+        const nonce = Math.floor(Math.random() * 1000);
+
+        const newBlock = {
+            index: newIndex,
+            timestamp,
+            event,
+            previousHash: previousBlock.hash,
+            hash: calculateHash(newIndex, timestamp, event, previousBlock.hash, nonce),
+            nonce
+        };
+
+        setBlockchains(prev => {
+            const newChain = [...(type === 'zra' ? prev.zra : prev.reports), newBlock];
+            validateChain(newChain);
+            return {
+                ...prev,
+                [type]: newChain
+            };
+        });
     };
 
     const addToBlockchain = (record) => {
@@ -173,13 +200,29 @@ export const BlockchainProvider = ({ children }) => {
     };
 
     const value = {
-        blockchain,
-        addToBlockchain,
+        // Reports blockchain
+        chain: blockchains.reports, // legacy name for reports chain
+        reportsChain: blockchains.reports,
+        // ZRA blockchain
+        zraChain: blockchains.zra,
+        // Common functions
+        addBlock,
+        addToBlockchain: (record) => addBlock(record, 'zra'),
         clearBlockchain,
         isChainValid,
         validateChain,
         simulateTampering,
-        getTaxRecordsFromBlockchain
+        getTaxRecordsFromBlockchain: () => {
+            return blockchains.zra
+                .filter(block => block.data && block.data.type === "tax_approval")
+                .map(block => ({
+                    ...block.data.record,
+                    blockIndex: block.index,
+                    blockTimestamp: block.timestamp,
+                    transactionHash: block.hash,
+                    approvedBy: block.data.approvedBy
+                }));
+        }
     };
 
     return (

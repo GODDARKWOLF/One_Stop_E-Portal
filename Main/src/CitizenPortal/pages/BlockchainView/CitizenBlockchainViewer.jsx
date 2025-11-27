@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useBlockchain } from '../../../SharedContext/BlockchainContext';
 import './CitizenBlockchainViewer.css';
 
 const CitizenBlockchainViewer = () => {
-    const { blockchain, isChainValid, validateChain, getTaxRecordsFromBlockchain } = useBlockchain();
+    const { zraChain, reportsChain, isChainValid, validateChain, getTaxRecordsFromBlockchain } = useBlockchain();
+    const [activeTab, setActiveTab] = useState('zra'); // 'zra' or 'reports'
 
     // Get only tax approval records for this citizen
     const citizenRecords = getTaxRecordsFromBlockchain();
@@ -24,11 +25,44 @@ const CitizenBlockchainViewer = () => {
 
     return (
         <div className="citizen-blockchain-viewer">
+            {/* Tabs */}
+            <div className="blockchain-tabs" style={{ marginBottom: '20px' }}>
+                <button
+                    className={`tab-button ${activeTab === 'zra' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('zra')}
+                    style={{
+                        padding: '10px 20px',
+                        marginRight: '10px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        background: activeTab === 'zra' ? '#007bff' : '#e9ecef',
+                        color: activeTab === 'zra' ? 'white' : '#333',
+                        cursor: 'pointer'
+                    }}
+                >
+                    📑 ZRA Tax Records
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'reports' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('reports')}
+                    style={{
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        background: activeTab === 'reports' ? '#007bff' : '#e9ecef',
+                        color: activeTab === 'reports' ? 'white' : '#333',
+                        cursor: 'pointer'
+                    }}
+                >
+                    🔍 Reports & Claims
+                </button>
+            </div>
+
             {/* Header Section */}
             <div className="citizen-bc-header">
                 <div className="citizen-bc-title">
-                    <h2>📒 My Tax Approval History</h2>
-                    <p>Secure, permanent record of your tax submissions</p>
+                    <h2>{activeTab === 'zra' ? '📒 My Tax Approval History' : '📋 My Reports History'}</h2>
+                    <p>{activeTab === 'zra' ? 'Secure, permanent record of your tax submissions' : 'Blockchain record of your reports and claims'}</p>
                 </div>
                 <div className="citizen-bc-status">
                     <div className={`ledger-status ${isChainValid ? 'secure' : 'warning'}`}>
@@ -42,134 +76,161 @@ const CitizenBlockchainViewer = () => {
                 </div>
             </div>
 
-            {/* Quick Stats */}
-            <div className="citizen-stats">
-                <div className="stat-item">
-                    <div className="stat-value">{citizenRecords.length}</div>
-                    <div className="stat-label">Total Approvals</div>
-                </div>
-                <div className="stat-item">
-                    <div className="stat-value">
-                        {citizenRecords.filter(record => record.status === 'Approved').length}
+            {/* Stats Section */}
+            {activeTab === 'zra' ? (
+                /* ZRA Quick Stats */
+                <div className="citizen-stats">
+                    <div className="stat-item">
+                        <div className="stat-value">{citizenRecords.length}</div>
+                        <div className="stat-label">Total Approvals</div>
                     </div>
-                    <div className="stat-label">Approved</div>
-                </div>
-                <div className="stat-item">
-                    <div className="stat-value">
-                        {blockchain.length}
+                    <div className="stat-item">
+                        <div className="stat-value">
+                            {citizenRecords.filter(record => record.status === 'Approved').length}
+                        </div>
+                        <div className="stat-label">Approved</div>
                     </div>
-                    <div className="stat-label">Total Blocks</div>
-                </div>
-                <div className="stat-item">
-                    <div className="stat-value">
-                        {isChainValid ? '100%' : '!'}
+                    <div className="stat-item">
+                        <div className="stat-value">
+                            {isChainValid ? '100%' : '!'}
+                        </div>
+                        <div className="stat-label">Integrity</div>
                     </div>
-                    <div className="stat-label">Integrity</div>
                 </div>
-            </div>
+            ) : (
+                /* Reports Quick Stats */
+                <div className="citizen-stats">
+                    <div className="stat-item">
+                        <div className="stat-value">
+                            {reportsChain.filter(block => block.event?.type === 'NEW_REPORT').length}
+                        </div>
+                        <div className="stat-label">Total Reports</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value">
+                            {reportsChain.filter(block =>
+                                block.event?.type === 'NEW_REPORT' &&
+                                block.event.payload.type === 'missing_person'
+                            ).length}
+                        </div>
+                        <div className="stat-label">Missing Person Reports</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value">
+                            {reportsChain.filter(block =>
+                                block.event?.type === 'verify'
+                            ).length}
+                        </div>
+                        <div className="stat-label">Verified Reports</div>
+                    </div>
+                </div>
+            )}
 
             {/* Educational Card */}
-            <div className="citizen-edu-card">
-                <div className="edu-icon">💡</div>
+            <div className="educational-card">
+                <div className="edu-icon">🔒</div>
                 <div className="edu-content">
-                    <h4>Your Tax Records Are Secured by Blockchain</h4>
-                    <div className="edu-points">
-                        <div className="edu-point">✅ <strong>Permanent:</strong> Once approved, records cannot be changed</div>
-                        <div className="edu-point">🔗 <strong>Linked:</strong> Each record connects to the previous one</div>
-                        <div className="edu-point">🛡️ <strong>Secure:</strong> Any tampering is immediately detected</div>
-                        <div className="edu-point">👁️ <strong>Transparent:</strong> You can verify your records anytime</div>
-                    </div>
+                    <h3>What is Blockchain?</h3>
+                    <p>
+                        {activeTab === 'zra'
+                            ? 'A blockchain is a secure, tamper-proof digital ledger. Each tax approval becomes a "block" in the chain, creating a permanent and verifiable record of your transactions.'
+                            : 'The reports blockchain securely records all your reports and their verification status. Police verifications are permanently recorded, ensuring transparency and trust.'
+                        }
+                    </p>
                 </div>
             </div>
 
-            {/* Records Timeline */}
-            <div className="records-timeline">
-                <h3>Your Approval Timeline</h3>
-
-                {citizenRecords.length === 0 ? (
-                    <div className="no-records">
-                        <div className="no-records-icon">📋</div>
-                        <h4>No Approved Tax Records Yet</h4>
-                        <p>When your tax submissions are approved by ZRA, they will appear here as permanent records.</p>
-                    </div>
-                ) : (
-                    <div className="timeline-container">
-                        {citizenRecords.map((record, index) => (
-                            <div key={record.transactionHash || record.id} className="timeline-item">
-                                <div className="timeline-marker">
-                                    <div className="marker-icon">
-                                        {getStatusIcon(record.status)}
+            {/* Records List */}
+            <div className="blockchain-records">
+                <h3>Recent Records</h3>
+                {activeTab === 'zra' ? (
+                    // ZRA Records
+                    citizenRecords.length === 0 ? (
+                        <div className="no-records">No tax approvals found in the blockchain.</div>
+                    ) : (
+                        <div className="records-list">
+                            {citizenRecords.map((record, index) => (
+                                <div key={index} className="record-item">
+                                    <div className="record-header">
+                                        <span className="record-icon">{getStatusIcon(record.status)}</span>
+                                        <span className="record-type">{record.type || 'Tax Approval'}</span>
+                                        <span className="record-date">{new Date(record.blockTimestamp).toLocaleString()}</span>
                                     </div>
-                                    <div className="timeline-line"></div>
-                                </div>
-
-                                <div className="timeline-content">
-                                    <div className="record-card">
-                                        <div className="record-header">
-                                            <div className="record-title">
-                                                <h4>Tax File: {record.fileName}</h4>
-                                                <span className="record-date">{record.timestamp}</span>
-                                            </div>
-                                            <div className="record-status approved">
-                                                ✅ Approved
-                                            </div>
+                                    <div className="record-details">
+                                        <div className="detail-item">
+                                            <span className="detail-label">Block:</span>
+                                            <span className="detail-value">#{record.blockIndex}</span>
                                         </div>
-
-                                        <div className="record-details">
-                                            <div className="detail-row">
-                                                <span className="detail-label">Citizen Name:</span>
-                                                <span className="detail-value">{record.citizenName}</span>
+                                        <div className="detail-item">
+                                            <span className="detail-label">Hash:</span>
+                                            <span className="detail-value hash">{formatHash(record.transactionHash)}</span>
+                                        </div>
+                                        <div className="detail-item">
+                                            <span className="detail-label">Amount:</span>
+                                            <span className="detail-value">K{record.amount?.toFixed(2) || '0.00'}</span>
+                                        </div>
+                                        <div className="detail-item">
+                                            <span className="detail-label">Officer:</span>
+                                            <span className="detail-value">{record.approvedBy || 'System'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )
+                ) : (
+                    // Reports Records
+                    reportsChain.length === 0 ? (
+                        <div className="no-records">No reports found in the blockchain.</div>
+                    ) : (
+                        <div className="records-list">
+                            {reportsChain.filter(block => block.event).map((block, index) => (
+                                <div key={index} className="record-item">
+                                    <div className="record-header">
+                                        <span className="record-icon">
+                                            {block.event.type === 'NEW_REPORT'
+                                                ? (block.event.payload.type === 'missing_person' ? '🚨' : '📝')
+                                                : block.event.type === 'verify' ? '✅' : '📋'}
+                                        </span>
+                                        <span className="record-type">
+                                            {block.event.type === 'NEW_REPORT'
+                                                ? (block.event.payload.type === 'missing_person'
+                                                    ? `Missing Person: ${block.event.payload.missingName}`
+                                                    : block.event.payload.title || 'General Report')
+                                                : `Report ${block.event.type.charAt(0).toUpperCase() + block.event.type.slice(1)}`}
+                                        </span>
+                                        <span className="record-date">{new Date(block.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <div className="record-details">
+                                        <div className="detail-item">
+                                            <span className="detail-label">Block:</span>
+                                            <span className="detail-value">#{block.index}</span>
+                                        </div>
+                                        <div className="detail-item">
+                                            <span className="detail-label">Hash:</span>
+                                            <span className="detail-value hash">{formatHash(block.hash)}</span>
+                                        </div>
+                                        {block.event.type === 'verify' && (
+                                            <div className="detail-item">
+                                                <span className="detail-label">Verified By:</span>
+                                                <span className="detail-value">{block.event.officer || 'Unknown Officer'}</span>
                                             </div>
-                                            <div className="detail-row">
-                                                <span className="detail-label">Approved By:</span>
-                                                <span className="detail-value">{record.approvedBy || 'ZRA Officer'}</span>
-                                            </div>
-                                            <div className="detail-row">
-                                                <span className="detail-label">Block Number:</span>
-                                                <span className="detail-value">#{record.blockIndex}</span>
-                                            </div>
-                                            <div className="detail-row">
-                                                <span className="detail-label">Transaction ID:</span>
-                                                <span className="detail-value hash" title={record.transactionHash}>
-                                                    {formatHash(record.transactionHash)}
+                                        )}
+                                        {block.event.type === 'NEW_REPORT' && (
+                                            <div className="detail-item">
+                                                <span className="detail-label">Description:</span>
+                                                <span className="detail-value">
+                                                    {block.event.payload.description?.substring(0, 100)}
+                                                    {block.event.payload.description?.length > 100 ? '...' : ''}
                                                 </span>
                                             </div>
-                                        </div>
-
-                                        <div className="security-badge">
-                                            <span className="badge-icon">🔒</span>
-                                            <span>Secured by ZRA Blockchain</span>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Verification Section */}
-            <div className="verification-section">
-                <div className="verification-card">
-                    <h4>🔍 Verify Record Integrity</h4>
-                    <p>Check that your tax records haven't been tampered with</p>
-                    <button
-                        onClick={validateChain}
-                        className="verify-btn"
-                    >
-                        {isChainValid ? '✅ Verify All Records' : '⚠️ Check for Tampering'}
-                    </button>
-
-                    {!isChainValid && (
-                        <div className="tamper-warning">
-                            <span className="warning-icon">🚨</span>
-                            <div>
-                                <strong>Warning:</strong> Some records may have been tampered with.
-                                Please contact ZRA for verification.
-                            </div>
+                            ))}
                         </div>
-                    )}
-                </div>
+                    )
+                )}
             </div>
         </div>
     );

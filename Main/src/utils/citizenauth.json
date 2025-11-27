@@ -4,34 +4,27 @@
         "name": "Paul Chilwalo",
         "email": "paul@citizen.com",
         "password": "12345",
-        "role": "citizen",
-        "taxRecords": [],
-        "relatives": []
+        "role": "citizen"
     },
     {
         "id": 2,
         "name": "Grace Mwale",
         "email": "grace@citizen.com",
         "password": "12345",
-        "role": "citizen",
-        "taxRecords": [],
-        "relatives": []
+        "role": "citizen"
     },
     {
         "id": 3,
-        "name": "Chanda Phiri",
-        "email": "chanda@citizen.com",
-        "password": "12345",
-        "role": "citizen",
-        "taxRecords": [],
-        "relatives": []
+        "name": "ZRA Official",
+        "email": "admin@zra.gov",
+        "password": "zra123",
+        "role": "zra"
     },
     {
         "id": 4,
-        "name": "John Zulu",
-        "email": "john@citizen.com",
-        "password": "12345",
-        "role": "merchant",
-        "taxRecords": []
+        "name": "Officer Chanda",
+        "email": "officer@police.gov",
+        "password": "police123",
+        "role": "police"
     }
 ]

@@ -3,7 +3,9 @@ import { useBlockchain } from '../../../SharedContext/BlockchainContext';
 import { TaxContext } from '../../../SharedContext/TaxContext';
 import './BlockchainViewer.css';
 const BlockchainPage = () => {
-    const { blockchain, isChainValid, validateChain, simulateTampering } = useBlockchain();
+    const { blockchain: rawBlockchain, isChainValid, validateChain, simulateTampering } = useBlockchain();
+    // Defensive: ensure blockchain is always an array
+    const blockchain = Array.isArray(rawBlockchain) ? rawBlockchain : [];
     const { deleteTaxRecord } = useContext(TaxContext);
     const [tamperedBlocks, setTamperedBlocks] = useState(new Set());
 
@@ -86,7 +88,7 @@ const BlockchainPage = () => {
                 <div className="stat-card">
                     <div className="stat-icon">📊</div>
                     <div className="stat-info">
-                        <div className="stat-number">{blockchain.length}</div>
+                        <div className="stat-number">{blockchain ? blockchain.length : 0}</div>
                         <div className="stat-label">Total Blocks</div>
                     </div>
                 </div>
@@ -94,7 +96,7 @@ const BlockchainPage = () => {
                     <div className="stat-icon">✅</div>
                     <div className="stat-info">
                         <div className="stat-number">
-                            {blockchain.filter(block => block.data.type === 'tax_approval').length}
+                            {blockchain ? blockchain.filter(block => block.data && block.data.type === 'tax_approval').length : 0}
                         </div>
                         <div className="stat-label">Tax Approvals</div>
                     </div>
@@ -173,128 +175,247 @@ const BlockchainPage = () => {
                 </div>
 
                 <div className="blockchain-visualization">
-                    {blockchain.map((block, index) => {
-                        const blockType = getBlockType(block);
-                        const blockTitle = getBlockTitle(block);
-                        const isTampered = isBlockTampered(block.index);
-                        const connectionStatus = getConnectionStatus(block, blockchain[index + 1]);
+                    {(blockchain && blockchain.length > 0)
+                        ? blockchain.map((block, index) => {
+                            const blockType = getBlockType(block);
+                            const blockTitle = getBlockTitle(block);
+                            const isTampered = isBlockTampered(block.index);
+                            const connectionStatus = getConnectionStatus(block, blockchain[index + 1]);
 
-                        return (
-                            <React.Fragment key={block.hash}>
-                                <div className={`block-wrapper ${isTampered ? 'tampered' : ''}`}>
-                                    <div className={`block-card block-${blockType} ${isTampered ? 'tampered-block' : ''}`}>
-                                        {/* Block Header */}
-                                        <div className="block-card-header">
-                                            <div className="block-type-indicator">
-                                                <span className="block-icon">
-                                                    {blockType === 'genesis' ? '🌱' :
-                                                        blockType === 'tax-record' ? '📄' : '⚙️'}
-                                                </span>
-                                                <div className="block-titles">
-                                                    <div className="block-main-title">{blockTitle}</div>
-                                                    <div className="block-sub-title">Block #{block.index}</div>
+                            return (
+                                <React.Fragment key={block.hash}>
+                                    <div className={`block-wrapper ${isTampered ? 'tampered' : ''}`}>
+                                        <div className={`block-card block-${blockType} ${isTampered ? 'tampered-block' : ''}`}>
+                                            {/* Block Header */}
+                                            <div className="block-card-header">
+                                                <div className="block-type-indicator">
+                                                    <span className="block-icon">
+                                                        {blockType === 'genesis' ? '🌱' :
+                                                            blockType === 'tax-record' ? '📄' : '⚙️'}
+                                                    </span>
+                                                    <div className="block-titles">
+                                                        <div className="block-main-title">{blockTitle}</div>
+                                                        <div className="block-sub-title">Block #{block.index}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="block-actions">
+                                                    {isTampered && (
+                                                        <div className="tamper-warning">
+                                                            ⚠️ COMPROMISED
+                                                        </div>
+                                                    )}
+                                                    {blockType === 'tax-record' && (
+                                                        <button
+                                                            onClick={() => handleDeleteRecord(block)}
+                                                            className="delete-block-btn"
+                                                            title="Delete record (will break chain)"
+                                                        >
+                                                            🗑️ Delete
+                                                        </button>
+                                                    )}
+                                                    {block.index > 0 && !isTampered && (
+                                                        <button
+                                                            onClick={() => {
+                                                                simulateTampering(block.index);
+                                                                setTamperedBlocks(prev => new Set(prev).add(block.index));
+                                                            }}
+                                                            className="test-security-btn"
+                                                        >
+                                                            ⚠️ Test Security
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <div className="block-actions">
-                                                {isTampered && (
-                                                    <div className="tamper-warning">
-                                                        ⚠️ COMPROMISED
+
+                                            {/* Block Content */}
+                                            <div className="block-card-content">
+                                                <div className="block-info-grid">
+                                                    <div className="info-item">
+                                                        <label>Timestamp</label>
+                                                        <span>{block.timestamp}</span>
                                                     </div>
-                                                )}
-                                                {blockType === 'tax-record' && (
-                                                    <button
-                                                        onClick={() => handleDeleteRecord(block)}
-                                                        className="delete-block-btn"
-                                                        title="Delete record (will break chain)"
-                                                    >
-                                                        🗑️ Delete
-                                                    </button>
-                                                )}
-                                                {block.index > 0 && !isTampered && (
-                                                    <button
-                                                        onClick={() => {
-                                                            simulateTampering(block.index);
-                                                            setTamperedBlocks(prev => new Set(prev).add(block.index));
-                                                        }}
-                                                        className="test-security-btn"
-                                                    >
-                                                        ⚠️ Test Security
-                                                    </button>
-                                                )}
+
+                                                    {block.data.type === 'tax_approval' && (
+                                                        <>
+                                                            <div className="info-item">
+                                                                <label>Citizen Name</label>
+                                                                <span className="highlight-text">{block.data.record.citizenName}</span>
+                                                            </div>
+                                                            <div className="info-item">
+                                                                <label>Tax File</label>
+                                                                <span>{block.data.record.fileName}</span>
+                                                            </div>
+                                                            <div className="info-item">
+                                                                <label>Approval Status</label>
+                                                                <span className="status-badge approved">Approved</span>
+                                                            </div>
+                                                            <div className="info-item">
+                                                                <label>Approved By</label>
+                                                                <span>{block.data.approvedBy || 'ZRA Officer'}</span>
+                                                            </div>
+                                                        </>
+                                                    )}
+
+                                                    {block.data.type === 'system' && (
+                                                        <div className="info-item full-width">
+                                                            <label>System Message</label>
+                                                            <span>{block.data.message}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Hash Section */}
+                                                <div className="hash-section">
+                                                    <div className="hash-item">
+                                                        <label>Previous Block Hash</label>
+                                                        <div className="hash-value" title={block.previousHash}>
+                                                            {block.previousHash.substring(0, 24)}...
+                                                        </div>
+                                                    </div>
+                                                    <div className="hash-item">
+                                                        <label>Current Block Hash</label>
+                                                        <div className="hash-value" title={block.hash}>
+                                                            {block.hash.substring(0, 24)}...
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        {/* Block Content */}
-                                        <div className="block-card-content">
-                                            <div className="block-info-grid">
-                                                <div className="info-item">
-                                                    <label>Timestamp</label>
-                                                    <span>{block.timestamp}</span>
-                                                </div>
-
-                                                {block.data.type === 'tax_approval' && (
-                                                    <>
-                                                        <div className="info-item">
-                                                            <label>Citizen Name</label>
-                                                            <span className="highlight-text">{block.data.record.citizenName}</span>
-                                                        </div>
-                                                        <div className="info-item">
-                                                            <label>Tax File</label>
-                                                            <span>{block.data.record.fileName}</span>
-                                                        </div>
-                                                        <div className="info-item">
-                                                            <label>Approval Status</label>
-                                                            <span className="status-badge approved">Approved</span>
-                                                        </div>
-                                                        <div className="info-item">
-                                                            <label>Approved By</label>
-                                                            <span>{block.data.approvedBy || 'ZRA Officer'}</span>
-                                                        </div>
-                                                    </>
-                                                )}
-
-                                                {block.data.type === 'system' && (
-                                                    <div className="info-item full-width">
-                                                        <label>System Message</label>
-                                                        <span>{block.data.message}</span>
-                                                    </div>
-                                                )}
+                                    {/* Connection Line */}
+                                    {index < blockchain.length - 1 && (
+                                        <div className={`block-connection ${connectionStatus}`}>
+                                            <div className="connection-line"></div>
+                                            <div className="connection-status">
+                                                {connectionStatus === 'broken' ? '❌ BROKEN' : '✅ CONNECTED'}
                                             </div>
+                                        </div>
+                                    )}
+                                </React.Fragment>
+                            );
+                        })
+                        : null}
+                    const blockType = getBlockType(block);
+                    const blockTitle = getBlockTitle(block);
+                    const isTampered = isBlockTampered(block.index);
+                    const connectionStatus = getConnectionStatus(block, blockchain[index + 1]);
 
-                                            {/* Hash Section */}
-                                            <div className="hash-section">
-                                                <div className="hash-item">
-                                                    <label>Previous Block Hash</label>
-                                                    <div className="hash-value" title={block.previousHash}>
-                                                        {block.previousHash.substring(0, 24)}...
-                                                    </div>
+                    return (
+                    <React.Fragment key={block.hash}>
+                        <div className={`block-wrapper ${isTampered ? 'tampered' : ''}`}>
+                            <div className={`block-card block-${blockType} ${isTampered ? 'tampered-block' : ''}`}>
+                                {/* Block Header */}
+                                <div className="block-card-header">
+                                    <div className="block-type-indicator">
+                                        <span className="block-icon">
+                                            {blockType === 'genesis' ? '🌱' :
+                                                blockType === 'tax-record' ? '📄' : '⚙️'}
+                                        </span>
+                                        <div className="block-titles">
+                                            <div className="block-main-title">{blockTitle}</div>
+                                            <div className="block-sub-title">Block #{block.index}</div>
+                                        </div>
+                                    </div>
+                                    <div className="block-actions">
+                                        {isTampered && (
+                                            <div className="tamper-warning">
+                                                ⚠️ COMPROMISED
+                                            </div>
+                                        )}
+                                        {blockType === 'tax-record' && (
+                                            <button
+                                                onClick={() => handleDeleteRecord(block)}
+                                                className="delete-block-btn"
+                                                title="Delete record (will break chain)"
+                                            >
+                                                🗑️ Delete
+                                            </button>
+                                        )}
+                                        {block.index > 0 && !isTampered && (
+                                            <button
+                                                onClick={() => {
+                                                    simulateTampering(block.index);
+                                                    setTamperedBlocks(prev => new Set(prev).add(block.index));
+                                                }}
+                                                className="test-security-btn"
+                                            >
+                                                ⚠️ Test Security
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Block Content */}
+                                <div className="block-card-content">
+                                    <div className="block-info-grid">
+                                        <div className="info-item">
+                                            <label>Timestamp</label>
+                                            <span>{block.timestamp}</span>
+                                        </div>
+
+                                        {block.data.type === 'tax_approval' && (
+                                            <>
+                                                <div className="info-item">
+                                                    <label>Citizen Name</label>
+                                                    <span className="highlight-text">{block.data.record.citizenName}</span>
                                                 </div>
-                                                <div className="hash-item">
-                                                    <label>Current Block Hash</label>
-                                                    <div className="hash-value" title={block.hash}>
-                                                        {block.hash.substring(0, 24)}...
-                                                    </div>
+                                                <div className="info-item">
+                                                    <label>Tax File</label>
+                                                    <span>{block.data.record.fileName}</span>
                                                 </div>
+                                                <div className="info-item">
+                                                    <label>Approval Status</label>
+                                                    <span className="status-badge approved">Approved</span>
+                                                </div>
+                                                <div className="info-item">
+                                                    <label>Approved By</label>
+                                                    <span>{block.data.approvedBy || 'ZRA Officer'}</span>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {block.data.type === 'system' && (
+                                            <div className="info-item full-width">
+                                                <label>System Message</label>
+                                                <span>{block.data.message}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Hash Section */}
+                                    <div className="hash-section">
+                                        <div className="hash-item">
+                                            <label>Previous Block Hash</label>
+                                            <div className="hash-value" title={block.previousHash}>
+                                                {block.previousHash.substring(0, 24)}...
+                                            </div>
+                                        </div>
+                                        <div className="hash-item">
+                                            <label>Current Block Hash</label>
+                                            <div className="hash-value" title={block.hash}>
+                                                {block.hash.substring(0, 24)}...
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                {/* Connection Line */}
-                                {index < blockchain.length - 1 && (
-                                    <div className={`block-connection ${connectionStatus}`}>
-                                        <div className="connection-line"></div>
-                                        <div className="connection-status">
-                                            {connectionStatus === 'broken' ? '❌ BROKEN' : '✅ CONNECTED'}
-                                        </div>
-                                    </div>
-                                )}
-                            </React.Fragment>
-                        );
-                    })}
+                        {/* Connection Line */}
+                        {index < blockchain.length - 1 && (
+                            <div className={`block-connection ${connectionStatus}`}>
+                                <div className="connection-line"></div>
+                                <div className="connection-status">
+                                    {connectionStatus === 'broken' ? '❌ BROKEN' : '✅ CONNECTED'}
+                                </div>
+                            </div>
+                        )}
+                    </React.Fragment>
+                    );
                 </div>
 
-                {blockchain.length === 1 && (
+                {(blockchain && blockchain.length === 1) && (
                     <div className="empty-blockchain">
                         <div className="empty-icon">📋</div>
                         <h3>No Tax Approvals Recorded Yet</h3>

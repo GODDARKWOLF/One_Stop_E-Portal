@@ -1,0 +1,32 @@
+[
+    {
+        "id": "rel-1",
+        "name": "Grace Mwansa",
+        "age": 22,
+        "gender": "Female",
+        "relation": "Sister",
+        "photoURL": "",
+        "lastKnownLocation": "Kabulonga market",
+        "notes": "Blue backpack, red jacket."
+    },
+    {
+        "id": "rel-2",
+        "name": "Joseph Banda",
+        "age": 30,
+        "gender": "Male",
+        "relation": "Brother",
+        "photoURL": "",
+        "lastKnownLocation": "Market Square",
+        "notes": "Works at the stall near Block C."
+    },
+    {
+        "id": "rel-3",
+        "name": "Martha Phiri",
+        "age": 45,
+        "gender": "Female",
+        "relation": "Aunt",
+        "photoURL": "",
+        "lastKnownLocation": "Konkola area",
+        "notes": "Often visits family every Sunday."
+    }
+]

@@ -11,6 +11,7 @@ import {
     faCog,
     faUser,
     faBars,
+    faFile,
     faChain,
     faTimes
 } from '@fortawesome/free-solid-svg-icons';
@@ -56,6 +57,13 @@ const CitizenLayout = () => {
             icon: faCog,
             label: "Settings"
         },
+
+        {
+            path: "/citizen/reportsandclaims",
+            icon: faFile,
+            label: "Reports & Claims"
+        },
+
 
         {
             path: "/citizen/citizenblockchain",

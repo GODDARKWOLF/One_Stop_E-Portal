@@ -1,0 +1,20 @@
+[
+    {
+        "id": "r-1690000000000",
+        "type": "missing_person",
+        "reporterName": "Alice Mwansa",
+        "reporterContact": "+260971000111",
+        "relation": "sister",
+        "missingName": "Grace Mwansa",
+        "missingAge": 22,
+        "missingGender": "Female",
+        "lastSeenLocation": "Kabulonga market",
+        "lastSeenDate": "2025-10-28",
+        "description": "Last seen leaving market with a blue backpack. Wore red jacket.",
+        "photoURL": "",
+        "status": "Pending",
+        "createdAt": "2025-10-29T09:15:00.000Z",
+        "assignedOfficer": null,
+        "verified": false
+    }
+]

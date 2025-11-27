@@ -5,6 +5,7 @@ export { default as Activities } from './pages/Activities/Activities';
 export { default as LifeEvents } from './pages/LifeEvents/LifeEvents';
 export { default as Relatives } from './pages/Relatives/Relatives';
 export { default as Settings } from './pages/Settings/Settings';
+export { default as ReportsandClaims } from './pages/ReportsandClaims/ReportsandClaims';
 export { default as Tax } from './pages/Tax/Tax';
 export { default as CitizenBlockchainViewer } from './pages/BlockchainView/CitizenBlockchainViewer';
 
