@@ -1,5 +1,5 @@
 # One_Stop_E-Portal
-One stop E Portal for ZRA and Citizens 
+One stop E Portal for Citizens 
 
 Frontend: React
 Backend: Python
